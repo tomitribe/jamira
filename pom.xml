@@ -87,4 +87,17 @@
       </build>
     </profile>
   </profiles>
+
+  <repositories>
+    <repository>
+      <id>atlassian</id>
+      <name>Atlassian Public Repository</name>
+      <url>https://maven.atlassian.com/content/repositories/atlassian-public/</url>
+    </repository>
+    <repository>
+      <id>atlassian-external</id>
+      <name>Atlassian External Repository</name>
+      <url>https://packages.atlassian.com/maven-external/</url>
+    </repository>
+  </repositories>
 </project>
