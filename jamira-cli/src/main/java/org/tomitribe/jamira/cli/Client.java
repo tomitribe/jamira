@@ -46,8 +46,10 @@ import java.util.stream.StreamSupport;
 public class Client {
 
     private final JiraRestClient restClient;
+    private final Account account;
 
     public Client(final Account account) {
+        this.account = account;
         final JiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
         final URI jiraServerUri = account.getServerUri();
         restClient = factory.createWithBasicHttpAuthentication(jiraServerUri, account.getUsername(), account.getPassword());
@@ -102,7 +104,7 @@ public class Client {
     }
 
     public MetadataRestClient getMetadataClient() {
-        return new CachedMetadataRestClient(restClient.getMetadataClient());
+        return new CachedMetadataRestClient(restClient.getMetadataClient(), Home.get().jamira().cache(account));
     }
 
     public SearchRestClient getSearchClient() {

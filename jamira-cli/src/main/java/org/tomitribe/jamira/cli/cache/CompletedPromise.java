@@ -16,7 +16,6 @@
 package org.tomitribe.jamira.cli.cache;
 
 import io.atlassian.util.concurrent.Promise;
-import org.tomitribe.jamira.cli.Cache;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -24,82 +23,75 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class CachingPromise<T> implements Promise<T> {
-    private final Promise<T> promise;
-    private final Cache.Entry<T> cache;
+class CompletedPromise<T> implements Promise<T> {
+    private final T object;
 
-    public CachingPromise(final Promise<T> promise, final Cache.Entry<T> cache) {
-        this.promise = promise;
-        this.cache = cache;
+    public CompletedPromise(final T object) {
+        this.object = object;
     }
 
     @Override
     public T claim() {
-        return cache(promise.claim());
+        return object;
     }
 
     @Override
     public Promise<T> done(final Consumer<? super T> c) {
-        return promise.done(c);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Promise<T> fail(final Consumer<Throwable> c) {
-        return promise.fail(c);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Promise<T> then(final TryConsumer<? super T> callback) {
-        return promise.then(callback);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public <B> Promise<B> map(final Function<? super T, ? extends B> function) {
-        return promise.map(function);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public <B> Promise<B> flatMap(final Function<? super T, ? extends Promise<? extends B>> function) {
-        return promise.flatMap(function);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Promise<T> recover(final Function<Throwable, ? extends T> handleThrowable) {
-        return promise.recover(handleThrowable);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public <B> Promise<B> fold(final Function<Throwable, ? extends B> handleThrowable, final Function<? super T, ? extends B> function) {
-        return promise.fold(handleThrowable, function);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean cancel(final boolean mayInterruptIfRunning) {
-        return promise.cancel(mayInterruptIfRunning);
+        return false;
     }
 
     @Override
     public boolean isCancelled() {
-        return promise.isCancelled();
+        return false;
     }
 
     @Override
     public boolean isDone() {
-        return promise.isDone();
+        return true;
     }
 
     @Override
     public T get() throws InterruptedException, ExecutionException {
-        return cache(promise.get());
+        return object;
     }
 
     @Override
     public T get(final long timeout, final TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        return cache(promise.get(timeout, unit));
+        return object;
     }
-
-    private T cache(final T object) {
-        return cache.write(object);
-    }
-
 }

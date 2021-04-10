@@ -22,4 +22,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class IssueKey {
     private final String key;
+
+    public ProjectKey getProjectKey() {
+        final String projectKey = key.replaceAll("-.*", "");
+        return new ProjectKey(projectKey);
+    }
 }

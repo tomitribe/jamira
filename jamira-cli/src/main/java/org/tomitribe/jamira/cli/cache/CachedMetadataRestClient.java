@@ -25,24 +25,10 @@ import com.atlassian.jira.rest.client.api.domain.ServerInfo;
 import com.atlassian.jira.rest.client.api.domain.Status;
 import io.atlassian.util.concurrent.Promise;
 import org.tomitribe.jamira.cli.Cache;
-import org.tomitribe.jamira.cli.Home;
-import org.tomitribe.util.IO;
 
-import javax.json.bind.Jsonb;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.UncheckedIOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,9 +39,9 @@ public class CachedMetadataRestClient implements MetadataRestClient {
     private final MetadataRestClient client;
     private final Cache cache;
 
-    public CachedMetadataRestClient(final MetadataRestClient client) {
+    public CachedMetadataRestClient(final MetadataRestClient client, final Cache cache) {
         this.client = client;
-        this.cache = Home.get().jamira().cache();
+        this.cache = cache;
     }
 
     @Override
@@ -73,11 +59,10 @@ public class CachedMetadataRestClient implements MetadataRestClient {
 
     @Override
     public Promise<Iterable<IssueType>> getIssueTypes() {
-        final File file = cache.issueTypesJson();
+        final Cache.Entry<CachedIssueType[]> entry = new Cache.Entry<>(cache.issueTypesJson(), CachedIssueType[].class);
 
-        if (file.exists() && age(file) < TimeUnit.DAYS.toMillis(1)) {
-            final Jsonb jsonb = JsonbInstances.get();
-            final CachedIssueType[] cachedIssueTypes = jsonb.fromJson(slurp(file), CachedIssueType[].class);
+        if (entry.isFresh()) {
+            final CachedIssueType[] cachedIssueTypes = entry.read();
             final List<IssueType> issueTypes = Stream.of(cachedIssueTypes)
                     .map(CachedIssueType::toIssueType)
                     .collect(Collectors.toList());
@@ -90,11 +75,7 @@ public class CachedMetadataRestClient implements MetadataRestClient {
                     .map(CachedIssueType::fromIssueType)
                     .collect(Collectors.toList());
 
-            final Jsonb jsonb = JsonbInstances.get();
-            final String json = jsonb.toJson(cachedIssueTypes);
-            try (final PrintStream out = print(file)) {
-                out.print(json);
-            }
+            entry.write(cachedIssueTypes);
         }
 
         return new CompletedPromise<>(issueTypes);
@@ -106,32 +87,6 @@ public class CachedMetadataRestClient implements MetadataRestClient {
         } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    private long age(final File file) {
-        return System.currentTimeMillis() - file.lastModified();
-    }
-
-    private Cache.Entry<Iterable<IssueType>> getEntry() {
-        final Cache.Entry<IssueType[]> arrayEntry = new Cache.ObjectEntry<>(cache.issueTypesJson(), IssueType[].class);
-        return new Cache.Entry<Iterable<IssueType>>() {
-            @Override
-            public Iterable<IssueType> write(final Iterable<IssueType> object) {
-                final List<IssueType> list = new ArrayList<>();
-                object.forEach(list::add);
-                arrayEntry.write(list.toArray(new IssueType[0]));
-                return list;
-            }
-
-            @Override
-            public Iterable<IssueType> read() {
-                return Arrays.asList(arrayEntry.read());
-            }
-
-            public File getFile() {
-                return arrayEntry.getFile();
-            }
-        };
     }
 
     @Override
@@ -146,7 +101,26 @@ public class CachedMetadataRestClient implements MetadataRestClient {
 
     @Override
     public Promise<Iterable<Status>> getStatuses() {
-        return client.getStatuses();
+        final Cache.Entry<CachedStatus[]> entry = new Cache.Entry<>(cache.statusesJson(), CachedStatus[].class);
+
+        if (entry.isFresh()) {
+            final CachedStatus[] cachedStatuses = entry.read();
+            final List<Status> statuses = Stream.of(cachedStatuses)
+                    .map(CachedStatus::toStatus)
+                    .collect(Collectors.toList());
+            return new CompletedPromise<>(statuses);
+        }
+
+        final Iterable<Status> statuses = get(client.getStatuses());
+        { // Cache the values
+            final List<CachedStatus> cachedStatuses = stream(statuses)
+                    .map(CachedStatus::fromStatus)
+                    .collect(Collectors.toList());
+
+            entry.write(cachedStatuses);
+        }
+
+        return new CompletedPromise<>(statuses);
     }
 
     @Override
@@ -156,7 +130,26 @@ public class CachedMetadataRestClient implements MetadataRestClient {
 
     @Override
     public Promise<Iterable<Priority>> getPriorities() {
-        return client.getPriorities();
+        final Cache.Entry<CachedPriority[]> entry = new Cache.Entry<>(cache.prioritiesJson(), CachedPriority[].class);
+
+        if (entry.isFresh()) {
+            final CachedPriority[] cachedPriorities = entry.read();
+            final List<Priority> priorities = Stream.of(cachedPriorities)
+                    .map(CachedPriority::toPriority)
+                    .collect(Collectors.toList());
+            return new CompletedPromise<>(priorities);
+        }
+
+        final Iterable<Priority> priorities = get(client.getPriorities());
+        { // Cache the values
+            final List<CachedPriority> cachedPriorities = stream(priorities)
+                    .map(CachedPriority::fromPriority)
+                    .collect(Collectors.toList());
+
+            entry.write(cachedPriorities);
+        }
+
+        return new CompletedPromise<>(priorities);
     }
 
     @Override
@@ -166,7 +159,26 @@ public class CachedMetadataRestClient implements MetadataRestClient {
 
     @Override
     public Promise<Iterable<Resolution>> getResolutions() {
-        return client.getResolutions();
+        final Cache.Entry<CachedResolution[]> entry = new Cache.Entry<>(cache.resolutionsJson(), CachedResolution[].class);
+
+        if (entry.isFresh()) {
+            final CachedResolution[] cachedResolutions = entry.read();
+            final List<Resolution> resolutions = Stream.of(cachedResolutions)
+                    .map(CachedResolution::toResolution)
+                    .collect(Collectors.toList());
+            return new CompletedPromise<>(resolutions);
+        }
+
+        final Iterable<Resolution> resolutions = get(client.getResolutions());
+        { // Cache the values
+            final List<CachedResolution> cachedResolutions = stream(resolutions)
+                    .map(CachedResolution::fromResolution)
+                    .collect(Collectors.toList());
+
+            entry.write(cachedResolutions);
+        }
+
+        return new CompletedPromise<>(resolutions);
     }
 
     @Override
@@ -177,95 +189,6 @@ public class CachedMetadataRestClient implements MetadataRestClient {
     @Override
     public Promise<Iterable<Field>> getFields() {
         return client.getFields();
-    }
-
-    static class CompletedPromise<T> implements Promise<T> {
-        private final T object;
-
-        public CompletedPromise(final T object) {
-            this.object = object;
-        }
-
-        @Override
-        public T claim() {
-            return object;
-        }
-
-        @Override
-        public Promise<T> done(final Consumer<? super T> c) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Promise<T> fail(final Consumer<Throwable> c) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Promise<T> then(final TryConsumer<? super T> callback) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public <B> Promise<B> map(final Function<? super T, ? extends B> function) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public <B> Promise<B> flatMap(final Function<? super T, ? extends Promise<? extends B>> function) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Promise<T> recover(final Function<Throwable, ? extends T> handleThrowable) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public <B> Promise<B> fold(final Function<Throwable, ? extends B> handleThrowable, final Function<? super T, ? extends B> function) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean cancel(final boolean mayInterruptIfRunning) {
-            return false;
-        }
-
-        @Override
-        public boolean isCancelled() {
-            return false;
-        }
-
-        @Override
-        public boolean isDone() {
-            return true;
-        }
-
-        @Override
-        public T get() throws InterruptedException, ExecutionException {
-            return object;
-        }
-
-        @Override
-        public T get(final long timeout, final TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-            return object;
-        }
-    }
-
-    public static String slurp(final File file) {
-        try {
-            return IO.slurp(file);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    public static PrintStream print(final File file) {
-        try {
-            return IO.print(file);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
     }
 
 }

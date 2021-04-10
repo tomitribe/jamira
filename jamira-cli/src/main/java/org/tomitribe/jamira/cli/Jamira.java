@@ -15,12 +15,19 @@
  */
 package org.tomitribe.jamira.cli;
 
+import org.tomitribe.util.dir.Mkdir;
+
 import java.io.File;
 import java.util.stream.Stream;
 
 public interface Jamira extends org.tomitribe.util.dir.Dir {
 
-    Cache cache();
+    @Mkdir
+    Cache cache(final String name);
+
+    default Cache cache(final Account account) {
+        return cache(account.getName());
+    }
 
     default Account account() {
         return account("default");

@@ -56,7 +56,7 @@ public class CreateCommand {
 
         final BasicIssue createdIssue = client.getIssueClient().createIssue(issue.build()).get();
 
-        return createdIssue.getKey();
+        return createdIssue.getKey().trim();
     }
 
     //CHECKSTYLE:OFF

@@ -15,6 +15,7 @@
  */
 package org.tomitribe.jamira.cli;
 
+import org.tomitribe.jamira.cli.cache.CachedIssueType;
 import org.tomitribe.jamira.cli.cache.JsonbInstances;
 import org.tomitribe.util.IO;
 import org.tomitribe.util.dir.Dir;
@@ -32,24 +33,38 @@ public interface Cache extends Dir {
     @Name("issue-types.json")
     File issueTypesJson();
 
-    public static class ObjectEntry<T> implements Entry<T> {
+    @Name("statuses.json")
+    File statusesJson();
+
+    @Name("priorities.json")
+    File prioritiesJson();
+
+    @Name("resolutions.json")
+    File resolutionsJson();
+
+    class Entry<T> {
 
         private final File file;
         private final Class<T> type;
 
-        public ObjectEntry(final File file, final Class<T> type) {
+        public Entry(final File file, final Class<T> type) {
             this.file = file;
             this.type = type;
         }
 
-        @Override
+        public static long age(final File file) {
+            return System.currentTimeMillis() - file.lastModified();
+        }
+
         public File getFile() {
             return file;
         }
 
-        @Override
-        public T write(final T object) {
-            System.out.println("Writing cache");
+        public boolean isFresh() {
+            return file.exists() && Cache.Entry.age(file) < TimeUnit.DAYS.toMillis(30);
+        }
+
+        public void write(final Object object) {
             final Jsonb jsonb = JsonbInstances.get();
             try {
                 final String json = jsonb.toJson(object);
@@ -59,12 +74,9 @@ public interface Cache extends Dir {
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
-            return object;
         }
 
-        @Override
         public T read() {
-            System.out.println("Reading cache");
             final Jsonb jsonb = JsonbInstances.get();
             try {
                 final String json = IO.slurp(file);
@@ -73,21 +85,6 @@ public interface Cache extends Dir {
                 throw new UncheckedIOException(e);
             }
         }
-
-
     }
 
-    interface Entry<T> {
-        T write(T object);
-
-        T read();
-
-        File getFile();
-
-        default boolean olderThan(final long duration, final TimeUnit unit) {
-            final long now = System.currentTimeMillis();
-            final long age = now - getFile().lastModified();
-            return age > unit.toMillis(duration);
-        }
-    }
 }
