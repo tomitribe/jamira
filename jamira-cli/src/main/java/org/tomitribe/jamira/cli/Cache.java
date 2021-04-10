@@ -15,7 +15,6 @@
  */
 package org.tomitribe.jamira.cli;
 
-import org.tomitribe.jamira.cli.cache.CachedIssueType;
 import org.tomitribe.jamira.cli.cache.JsonbInstances;
 import org.tomitribe.util.IO;
 import org.tomitribe.util.dir.Dir;
