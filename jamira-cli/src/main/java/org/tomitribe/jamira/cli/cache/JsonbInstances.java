@@ -13,28 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli;
+package org.tomitribe.jamira.cli.cache;
 
-import java.io.File;
-import java.util.stream.Stream;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
 
-public interface Jamira extends org.tomitribe.util.dir.Dir {
+public class JsonbInstances {
 
-    Cache cache();
-
-    default Account account() {
-        return account("default");
+    private JsonbInstances() {
     }
 
-    default Account account(final String name) {
-        final File file = file(name + ".properties");
-        return Account.load(file);
-    }
+    private static final ThreadLocal<Jsonb> INSTANCES = ThreadLocal.withInitial(() -> {
+        final JsonbConfig config = new JsonbConfig()
+                .setProperty("johnzon.failOnMissingCreatorValues", false)
+                .withFormatting(true);
+        return JsonbBuilder.create(config);
+    });
 
-    default Stream<Account> accounts() {
-        return files()
-                .filter(file -> file.getName().endsWith(".properties"))
-                .map(Account::load);
+    public static Jsonb get() {
+        return INSTANCES.get();
     }
-
 }

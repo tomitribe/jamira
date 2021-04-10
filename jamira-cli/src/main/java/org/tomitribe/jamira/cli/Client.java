@@ -34,6 +34,7 @@ import com.atlassian.jira.rest.client.api.domain.Priority;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import io.atlassian.util.concurrent.Promise;
 import lombok.Data;
+import org.tomitribe.jamira.cli.cache.CachedMetadataRestClient;
 
 import java.net.URI;
 import java.util.Spliterator;
@@ -101,7 +102,7 @@ public class Client {
     }
 
     public MetadataRestClient getMetadataClient() {
-        return restClient.getMetadataClient();
+        return new CachedMetadataRestClient(restClient.getMetadataClient());
     }
 
     public SearchRestClient getSearchClient() {

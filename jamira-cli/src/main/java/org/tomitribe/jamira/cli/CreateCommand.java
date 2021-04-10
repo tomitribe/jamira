@@ -32,6 +32,15 @@ import java.util.List;
 public class CreateCommand {
 
 
+    public static void main(String[] args) throws Exception {
+        new CreateCommand().createSubtask(
+                new IssueKey("TOMEE-3002")
+                ,
+                "testing",
+                Account.name("default")
+        );
+    }
+
     @Command("subtask")
     public String createSubtask(final IssueKey parentKey,
                                 final String summary,
