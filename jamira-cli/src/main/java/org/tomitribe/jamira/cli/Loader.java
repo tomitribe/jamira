@@ -14,17 +14,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.tomitribe.jamira;
+package org.tomitribe.jamira.cli;
 
-import org.tomitribe.crest.api.Command;
+import java.util.Arrays;
+import java.util.Iterator;
 
-@Command("create")
-public class CreateCommand {
+public class Loader implements org.tomitribe.crest.api.Loader {
 
-
-    @Command("issue")
-    public String issue() {
-        return "Hello";
+    @Override
+    public Iterator<Class<?>> iterator() {
+        return Arrays.asList(
+                // TODO put actual commands here
+                Object.class,
+                AccountCommand.class,
+                ListCommand.class,
+                CreateCommand.class
+        ).iterator();
     }
-
 }

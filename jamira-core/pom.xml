@@ -35,7 +35,7 @@
     </dependency>
     <dependency>
       <groupId>com.atlassian.jira</groupId>
-      <artifactId>jira-rest-java-client-core</artifactId>
+      <artifactId>jira-rest-java-client-app</artifactId>
       <version>5.2.2</version>
     </dependency>
     <dependency>
