@@ -74,7 +74,7 @@ public class AccountCommand {
         final Jamira jamira = Home.get().jamira();
 
         final List<Account> accounts = jamira.accounts().collect(Collectors.toList());
-        return ListCommand.asTable(accounts, "name username serverUri");
+        return Formatting.asTable(accounts, "name username serverUri");
     }
 
     @Data

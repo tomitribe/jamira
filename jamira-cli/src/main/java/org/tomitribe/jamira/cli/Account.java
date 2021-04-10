@@ -88,7 +88,12 @@ public class Account {
         if ("default".equalsIgnoreCase(name)) {
             return jamira.accounts().findFirst().orElseThrow(NoAccountSetupException::new);
         }
-        return jamira.account(name);
+
+        final Account account = jamira.account(name);
+        if (!account.exists()) {
+            throw new NoSuchAccountExistsException(name);
+        }
+        return account;
     }
 
     static Account load(final File file) {

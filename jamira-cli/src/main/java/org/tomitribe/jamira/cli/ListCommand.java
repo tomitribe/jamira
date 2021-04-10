@@ -24,13 +24,6 @@ import com.atlassian.jira.rest.client.api.domain.Project;
 import org.tomitribe.crest.api.Command;
 import org.tomitribe.crest.api.Default;
 import org.tomitribe.crest.api.Option;
-import org.tomitribe.util.Join;
-import org.tomitribe.util.collect.ObjectMap;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 @Command("list")
 public class ListCommand {
@@ -41,7 +34,7 @@ public class ListCommand {
                                @Option("fields") @Default("issueKey summary status.name") final String fields) throws Exception {
         final Client client = account.getClient();
         final Issue issue = client.getIssueClient().getIssue(parent.getKey()).get();
-        return asTable(issue.getSubtasks(), fields);
+        return Formatting.asTable(issue.getSubtasks(), fields);
     }
 
     @Command("projects")
@@ -49,7 +42,7 @@ public class ListCommand {
             @Option("account") @Default("default") final Account account,
             @Option("fields") @Default("id key name") final String fields) throws Exception {
         final Client client = account.getClient();
-        return asTable(client.getProjectClient().getAllProjects().get(), fields);
+        return Formatting.asTable(client.getProjectClient().getAllProjects().get(), fields);
     }
 
     @Command("versions")
@@ -58,7 +51,7 @@ public class ListCommand {
                                @Option("fields") @Default("name released releaseDate") final String fields) throws Exception {
         final Client client = account.getClient();
         final Project project = client.getProjectClient().getProject(projectKey.getKey()).get();
-        return asTable(project.getVersions(), fields);
+        return Formatting.asTable(project.getVersions(), fields);
     }
 
     @Command("components")
@@ -68,7 +61,7 @@ public class ListCommand {
 
         final Client client = account.getClient();
         final Project project = client.getProjectClient().getProject(projectKey.getKey()).get();
-        return asTable(project.getComponents(), fields);
+        return Formatting.asTable(project.getComponents(), fields);
     }
 
     /**
@@ -93,7 +86,7 @@ public class ListCommand {
             @Option("include-inactive") final Boolean includeInactive,
             @Option("fields") @Default("name displayName timezone active") final String fields) throws Exception {
         final Client client = account.getClient();
-        return asTable(client.getUserClient().findUsers(
+        return Formatting.asTable(client.getUserClient().findUsers(
                 username,
                 startAt,
                 maxResults,
@@ -127,7 +120,7 @@ public class ListCommand {
                              @Option("fields") @Default("id name description") final String fields) throws Exception {
         final Client client = account.getClient();
         final GroupRestClient groupClient = client.getGroupClient();
-        return asTable(groupClient.findGroups(query, exclude, maxResults, userName).get(), fields);
+        return Formatting.asTable(groupClient.findGroups(query, exclude, maxResults, userName).get(), fields);
     }
 
     @Command("project-roles")
@@ -136,7 +129,7 @@ public class ListCommand {
                                    @Option("fields") @Default("name") final String fields) throws Exception {
         final Client client = account.getClient();
         final Project project = client.getProjectClient().getProject(projectKey.getKey()).get();
-        return asTable(project.getProjectRoles(), fields);
+        return Formatting.asTable(project.getProjectRoles(), fields);
     }
 
     @Command("favourite-filters")
@@ -144,7 +137,7 @@ public class ListCommand {
                                        @Option("fields") @Default("id name jql") final String fields) throws Exception {
         final Client client = account.getClient();
         final SearchRestClient searchClient = client.getSearchClient();
-        return asTable(searchClient.getFavouriteFilters().get(), fields);
+        return Formatting.asTable(searchClient.getFavouriteFilters().get(), fields);
     }
 
     @Command("issue-types")
@@ -152,7 +145,7 @@ public class ListCommand {
                                  @Option("fields") @Default("id name description") final String fields) throws Exception {
         final Client client = account.getClient();
         final MetadataRestClient metadataClient = client.getMetadataClient();
-        return asTable(metadataClient.getIssueTypes().get(), fields);
+        return Formatting.asTable(metadataClient.getIssueTypes().get(), fields);
     }
 
     @Command("issue-types")
@@ -161,7 +154,7 @@ public class ListCommand {
                                  @Option("fields") @Default("id name description") final String fields) throws Exception {
         final Client client = account.getClient();
         final Project project = client.getProjectClient().getProject(projectKey.getKey()).get();
-        return asTable(project.getIssueTypes(), fields);
+        return Formatting.asTable(project.getIssueTypes(), fields);
     }
 
     @Command("issue-link-types")
@@ -169,7 +162,7 @@ public class ListCommand {
                                      @Option("fields") @Default("id name inward outward") final String fields) throws Exception {
         final Client client = account.getClient();
         final MetadataRestClient metadataClient = client.getMetadataClient();
-        return asTable(metadataClient.getIssueLinkTypes().get(), fields);
+        return Formatting.asTable(metadataClient.getIssueLinkTypes().get(), fields);
     }
 
     @Command("statuses")
@@ -177,7 +170,7 @@ public class ListCommand {
                                @Option("fields") @Default("id name statusCategory.key description") final String fields) throws Exception {
         final Client client = account.getClient();
         final MetadataRestClient metadataClient = client.getMetadataClient();
-        return asTable(metadataClient.getStatuses().get(), fields);
+        return Formatting.asTable(metadataClient.getStatuses().get(), fields);
     }
 
     @Command("priorities")
@@ -185,7 +178,7 @@ public class ListCommand {
                                  @Option("fields") @Default("id name description") final String fields) throws Exception {
         final Client client = account.getClient();
         final MetadataRestClient metadataClient = client.getMetadataClient();
-        return asTable(metadataClient.getPriorities().get(), fields);
+        return Formatting.asTable(metadataClient.getPriorities().get(), fields);
     }
 
     @Command("resolutions")
@@ -193,7 +186,7 @@ public class ListCommand {
                                   @Option("fields") @Default("id name description") final String fields) throws Exception {
         final Client client = account.getClient();
         final MetadataRestClient metadataClient = client.getMetadataClient();
-        return asTable(metadataClient.getResolutions().get(), fields);
+        return Formatting.asTable(metadataClient.getResolutions().get(), fields);
     }
 
     @Command("fields")
@@ -201,108 +194,16 @@ public class ListCommand {
                              @Option("fields") @Default("fieldType id name") final String fields) throws Exception {
         final Client client = account.getClient();
         final MetadataRestClient metadataClient = client.getMetadataClient();
-        return asTable(metadataClient.getFields().get(), fields);
+        return Formatting.asTable(metadataClient.getFields().get(), fields);
     }
 
-    public static <T> String[][] asTable(final Iterable<T> items, final String fields) {
-        if ("all".equalsIgnoreCase(fields)) {
-            return asTable(items);
-        }
-        return asTable(items, fields.split("[ ,]+"));
-    }
-
-    public static <T> String[][] asTable(final Iterable<T> items, final String[] fields) {
-        final List<List<String>> rows = new ArrayList<>();
-
-        for (final T item : items) {
-            final List<String> row = new ArrayList<>();
-
-            final ObjectMap map = new ObjectMap(item);
-            for (final String field : fields) {
-                row.add(resolve(map, field));
-            }
-            rows.add(row);
-        }
-
-        // sort the rows
-//        Collections.sort(rows,(a, b) -> {
-//            a.
-//        });
-
-        final String[][] data = new String[rows.size() + 1][fields.length];
-        int rowCount = 0;
-
-        // Add the headers
-        data[rowCount++] = fields;
-
-        for (final List<String> row : rows) {
-            data[rowCount++] = row.toArray(new String[fields.length]);
-        }
-
-
-        return data;
-    }
-
-    public static <T> String[][] asTable(final Iterable<T> items) {
-        final List<List<String>> rows = new ArrayList<>();
-
-        int columns = 0;
-        List<String> keys = null;
-        for (final T item : items) {
-            final List<String> row = new ArrayList<>();
-
-            final ObjectMap map = new ObjectMap(item);
-
-            keys = new ArrayList<>(map.keySet());
-            Collections.sort(keys);
-
-            columns = Math.max(columns, keys.size());
-
-            for (final String field : keys) {
-                row.add(resolve(map, field));
-            }
-
-            rows.add(row);
-        }
-
-        // sort the rows
-//        Collections.sort(rows,(a, b) -> {
-//            a.
-//        });
-
-        final String[][] data = new String[rows.size() + 1][columns];
-        int rowCount = 0;
-
-        // Add the headers
-        data[rowCount++] = keys.toArray(new String[columns]);
-
-        for (final List<String> row : rows) {
-            data[rowCount++] = row.toArray(new String[columns]);
-        }
-
-        return data;
-    }
-
-//    @Command("subtasks")
+    //    @Command("subtasks")
 //    public Stream<String> subtasks2(final IssueKey parent) throws Exception {
 //        final Issue issue = client.getIssueClient().getIssue(parent.getKey()).get();
 //
 //        return Client.stream(issue.getSubtasks())
 //                .map(subtask -> String.format("%s  %s", subtask.getIssueKey(), subtask.getSummary()));
 //    }
-
-    private static String resolve(final ObjectMap map, final String field) {
-        final List<String> parts = new ArrayList<>(Arrays.asList(field.split("\\.")));
-
-        if (parts.size() > 1) {
-            final String part = parts.remove(0);
-            final Object object = map.get(part);
-            return resolve(new ObjectMap(object), Join.join(".", parts));
-        }
-
-        final Object o = map.get(field);
-        return o != null ? o.toString() : "null";
-    }
 
 
 }

@@ -29,7 +29,10 @@ import com.atlassian.jira.rest.client.api.SearchRestClient;
 import com.atlassian.jira.rest.client.api.SessionRestClient;
 import com.atlassian.jira.rest.client.api.UserRestClient;
 import com.atlassian.jira.rest.client.api.VersionRestClient;
+import com.atlassian.jira.rest.client.api.domain.IssueType;
+import com.atlassian.jira.rest.client.api.domain.Priority;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+import io.atlassian.util.concurrent.Promise;
 import lombok.Data;
 
 import java.net.URI;
@@ -47,6 +50,30 @@ public class Client {
         final JiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
         final URI jiraServerUri = account.getServerUri();
         restClient = factory.createWithBasicHttpAuthentication(jiraServerUri, account.getUsername(), account.getPassword());
+    }
+
+    public IssueType getIssueType(final String name) {
+        return stream(getMetadataClient().getIssueTypes())
+                .filter(issueType -> name.equalsIgnoreCase(issueType.getName()))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchIssueTypeException(name));
+    }
+
+    public Priority getPriority(final String name) {
+        return stream(getMetadataClient().getPriorities())
+                .filter(priority -> name.equalsIgnoreCase(priority.getName()))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchPriorityException(name));
+    }
+
+    public static <T> Stream<T> stream(final Promise<Iterable<T>> promise) {
+        try {
+            return stream(promise.get());
+        } catch (final RuntimeException e) {
+            throw e;
+        } catch (final Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public IssueRestClient getIssueClient() {
