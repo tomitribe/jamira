@@ -4,6 +4,19 @@ Jamira is a command-line API for Atlassian JIRA using the Tomitribe CREST librar
 
 ## Installation
 
+Jamira can be downloaded as a ready-to-go executable from Maven Central
+
+----
+curl https://repo1.maven.org/maven2/org/tomitribe/jamira/jamira-cli/0.1/jamira-cli-0.1.sh > /usr/local/bin/jamira
+chmod 755 /usr/local/bin/jamira
+----
+
+Additionally, if you want command completion you can add the following to your `~/.bash_profile`, `~/.bashrc` or similar environment setup scripts:
+
+----
+source "$(jamira _completion -f)"
+----
+
 ## Setup
 
 Jamira has accounts in a similar way git has remotes.  An account can be setup using the `account add` command
