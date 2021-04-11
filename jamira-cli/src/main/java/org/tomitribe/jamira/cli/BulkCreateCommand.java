@@ -18,6 +18,7 @@ package org.tomitribe.jamira.cli;
 
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.domain.BasicIssue;
+import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import com.atlassian.jira.rest.client.api.domain.BulkOperationResult;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.IssueFieldId;
@@ -45,13 +46,28 @@ public class BulkCreateCommand {
      * summaries from the piped input.  It is expected each summary is on
      * a separate line.
      *
+     * Any flags supplied such as `fix-version` or `component` will be applied
+     * to all sub-tasks created
+     *
      * @param parentKey The issue key of the parent issue
      * @param input Issue summaries will be read via piped input
+     * @param assignee Username of the person to which the issue should be assigned
+     * @param reporter Username of the person who is the reporter of the issue
+     * @param priority The name of the priority for the issue.  See the `list priorities` command
+     * @param affectedVersions  The names of the versions affected by the issue.  See the `list versions` command.  Flag may be repeated.
+     * @param fixVersions  The names of the versions affected by the issue.  See the `list versions` command.  Flag may be repeated.
+     * @param components  The component names relating to the issue.  See the `list components` command.  Flag may be repeated.
      * @param account The shortname of the jira install configured via the `setup` command
      */
     @Command("subtasks")
     public PrintOutput createSubtask(final IssueKey parentKey,
                                      @In final InputStream input,
+                                     @Option("assignee") final String assignee,
+                                     @Option("reporter") final String reporter,
+                                     @Option("priority") final String priority,
+                                     @Option("affected-version") final List<String> affectedVersions,
+                                     @Option("fix-version") final List<String> fixVersions,
+                                     @Option("component") final List<String> components,
                                      @Option("account") @Default("default") final Account account) throws Exception {
 
         final Client client = account.getClient();
@@ -65,7 +81,93 @@ public class BulkCreateCommand {
                 .map(String::trim)
                 .filter(s -> s.length() >= 0)
                 .map(s -> new IssueInputBuilder(parent.getProject(), type, s))
-                .peek(issueInputBuilder -> issueInputBuilder.setFieldValue("parent", parent))
+                .peek(issue -> {
+                    issue.setFieldValue("parent", parent);
+                    if (affectedVersions != null) issue.setAffectedVersionsNames(affectedVersions);
+                    if (fixVersions != null) issue.setFixVersionsNames(fixVersions);
+                    if (components != null) issue.setComponentsNames(components);
+                    if (assignee != null) issue.setAssigneeName(assignee);
+                    if (reporter != null) issue.setReporterName(reporter);
+                    if (priority != null) issue.setPriority(client.getPriority(priority));
+                })
+                .map(IssueInputBuilder::build)
+                .collect(Collectors.toList());
+
+        if (issues.size() == 0) {
+            throw new NoIssueSummariesSuppliedException();
+        }
+
+        final BulkOperationResult<BasicIssue> result = issueClient.createIssues(issues).get();
+
+        return out -> {
+
+            result.getErrors().forEach(errorResult -> {
+                final int number = errorResult.getFailedElementNumber();
+                final IssueInput failedIssue = issues.get(number);
+                final FieldInput field = failedIssue.getField(IssueFieldId.SUMMARY_FIELD.id);
+                out.printf("FAILED: %s%n", field.getValue());
+                errorResult.getElementErrors().getErrorMessages().forEach(s -> {
+                    out.printf("    ERROR: %s%n", s);
+                });
+            });
+
+            result.getIssues().forEach(basicIssue -> {
+                out.printf("%s%n", basicIssue.getKey());
+            });
+        };
+    }
+
+    /**
+     * Bulk-creates issues for the specified project by reading the
+     * summaries from the piped input.  It is expected each summary is on
+     * a separate line.
+     *
+     * Any flags supplied such as `fix-version` or `component` will be applied
+     * to all issues created
+     *
+     * @param projectKey Text key for the JIRA project. Example `TOMEE`
+     * @param input Issue summaries will be read via piped input
+     * @param typeName The name of the issue type.  See the `list issue-types` command
+     * @param assignee Username of the person to which the issue should be assigned
+     * @param reporter Username of the person who is the reporter of the issue
+     * @param priority The name of the priority for the issue.  See the `list priorities` command
+     * @param affectedVersions  The names of the versions affected by the issue.  See the `list versions` command.  Flag may be repeated.
+     * @param fixVersions  The names of the versions affected by the issue.  See the `list versions` command.  Flag may be repeated.
+     * @param components  The component names relating to the issue.  See the `list components` command.  Flag may be repeated.
+     * @param account The shortname of the jira install configured via the `setup` command
+     */
+    @Command("issues")
+    public PrintOutput issues(final ProjectKey projectKey,
+                              @In final InputStream input,
+                              @Option("type") @Default("bug") final String typeName,
+                              @Option("assignee") final String assignee,
+                              @Option("reporter") final String reporter,
+                              @Option("priority") final String priority,
+                              @Option("affected-version") final List<String> affectedVersions,
+                              @Option("fix-version") final List<String> fixVersions,
+                              @Option("component") final List<String> components,
+                              @Option("account") @Default("default") final Account account) throws Exception {
+
+        final Client client = account.getClient();
+        final IssueRestClient issueClient = client.getIssueClient();
+        final IssueType type = client.getIssueType(typeName);
+
+        final String slurp = IO.slurp(input);
+        final List<IssueInput> issues = Stream.of(slurp.split(System.lineSeparator()))
+                .map(String::trim)
+                .filter(s -> s.length() >= 0)
+                .map(s -> {
+                    final BasicProject project = new BasicProject(null, projectKey.getKey(), null, null);
+                    return new IssueInputBuilder(project, type, s);
+                })
+                .peek(issue -> {
+                    if (affectedVersions != null) issue.setAffectedVersionsNames(affectedVersions);
+                    if (fixVersions != null) issue.setFixVersionsNames(fixVersions);
+                    if (components != null) issue.setComponentsNames(components);
+                    if (assignee != null) issue.setAssigneeName(assignee);
+                    if (reporter != null) issue.setReporterName(reporter);
+                    if (priority != null) issue.setPriority(client.getPriority(priority));
+                })
                 .map(IssueInputBuilder::build)
                 .collect(Collectors.toList());
 
