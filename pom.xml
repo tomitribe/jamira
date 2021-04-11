@@ -26,14 +26,14 @@
 
   <groupId>org.tomitribe.jamira</groupId>
   <artifactId>jamira-parent</artifactId>
-  <version>0.1</version>
+  <version>0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <scm>
     <connection>scm:git:git@github.com:tomitribe/jamira.git</connection>
     <url>scm:git:git@github.com:tomitribe/jamira.git</url>
     <developerConnection>scm:git:git@github.com:tomitribe/jamira.git</developerConnection>
-    <tag>jamira-parent-0.1</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <modules>
