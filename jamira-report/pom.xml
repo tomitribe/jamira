@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.tomitribe.jamira</groupId>
     <artifactId>jamira-parent</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
   </parent>
 
   <artifactId>jamira-report</artifactId>
