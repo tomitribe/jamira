@@ -16,6 +16,13 @@
  */
 package org.tomitribe.jamira.cli;
 
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import org.tomitribe.crest.api.Command;
+import org.tomitribe.crest.api.Default;
+import org.tomitribe.crest.api.Option;
+
 import com.atlassian.jira.rest.client.api.ComponentRestClient;
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.VersionRestClient;
@@ -28,14 +35,11 @@ import com.atlassian.jira.rest.client.api.domain.Version;
 import com.atlassian.jira.rest.client.api.domain.input.ComponentInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.api.domain.input.VersionInputBuilder;
-import org.tomitribe.crest.api.Command;
-import org.tomitribe.crest.api.Default;
-import org.tomitribe.crest.api.Option;
 
-import java.util.List;
-import java.util.concurrent.ExecutionException;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @Command("create")
+@RegisterForReflection
 public class CreateCommand {
 
     /**

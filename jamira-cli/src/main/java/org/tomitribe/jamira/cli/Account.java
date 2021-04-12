@@ -15,10 +15,6 @@
  */
 package org.tomitribe.jamira.cli;
 
-import lombok.Data;
-import org.tomitribe.util.Files;
-import org.tomitribe.util.IO;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +23,14 @@ import java.io.UncheckedIOException;
 import java.net.URI;
 import java.util.Properties;
 
+import org.tomitribe.util.Files;
+import org.tomitribe.util.IO;
+
+import io.quarkus.runtime.annotations.RegisterForReflection;
+import lombok.Data;
+
 @Data
+@RegisterForReflection
 public class Account {
 
     private final String name;
@@ -86,10 +89,10 @@ public class Account {
         final Jamira jamira = Home.get().jamira();
 
         if ("default".equalsIgnoreCase(name)) {
-            return jamira.accounts().findFirst().orElseThrow(NoAccountSetupException::new);
+            return Jamira.accounts(jamira).findFirst().orElseThrow(NoAccountSetupException::new);
         }
 
-        final Account account = jamira.account(name);
+        final Account account = Jamira.account(jamira, name);
         if (!account.exists()) {
             throw new NoSuchAccountExistsException(name);
         }

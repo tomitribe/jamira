@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 package org.tomitribe.jamira.cli;
+import org.tomitribe.crest.Main;
 
-import io.quarkus.runtime.annotations.RegisterForReflection;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import io.quarkus.runtime.QuarkusApplication;
+import io.quarkus.runtime.annotations.QuarkusMain;
 
-@Data
-@AllArgsConstructor
-@RegisterForReflection
-public class ProjectKey {
-    private final String key;
+@QuarkusMain
+public class HelloWorldMain implements QuarkusApplication {
+
+  @Override
+  public int run(String... args) throws Exception {
+    Main.main(args);
+    return 0;
+ }
 }

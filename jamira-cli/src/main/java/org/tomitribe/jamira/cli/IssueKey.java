@@ -15,11 +15,13 @@
  */
 package org.tomitribe.jamira.cli;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
+@RegisterForReflection
 public class IssueKey {
     private final String key;
 

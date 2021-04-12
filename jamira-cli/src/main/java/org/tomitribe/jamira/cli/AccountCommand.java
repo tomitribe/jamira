@@ -15,15 +15,18 @@
  */
 package org.tomitribe.jamira.cli;
 
-import lombok.Data;
-import org.tomitribe.crest.api.Command;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.tomitribe.crest.api.Command;
+
+import io.quarkus.runtime.annotations.RegisterForReflection;
+import lombok.Data;
+
 @Command("account")
+@RegisterForReflection
 public class AccountCommand {
 
     /**
@@ -37,7 +40,7 @@ public class AccountCommand {
     @Command
     public void add(final Name name, final Username username, final Password password, final URI uri) throws IOException {
         final Jamira jamira = Home.get().jamira();
-        final Account account = jamira.account(name.getName());
+        final Account account = Jamira.account(jamira, name.getName());
 
         if (account.exists()) {
             throw new AccountExistsException(name.getName());
@@ -57,7 +60,7 @@ public class AccountCommand {
     @Command
     public void remove(final Name name) {
         final Jamira jamira = Home.get().jamira();
-        final Account account = jamira.account(name.getName());
+        final Account account = Jamira.account(jamira, name.getName());
 
         if (!account.exists()) {
             throw new NoSuchAccountExistsException(name.getName());
@@ -73,7 +76,7 @@ public class AccountCommand {
     public String[][] list() {
         final Jamira jamira = Home.get().jamira();
 
-        final List<Account> accounts = jamira.accounts().collect(Collectors.toList());
+        final List<Account> accounts = Jamira.accounts(jamira).collect(Collectors.toList());
         return Formatting.asTable(accounts, "name username serverUri");
     }
 
