@@ -11,6 +11,17 @@ curl https://repo1.maven.org/maven2/org/tomitribe/jamira/jamira-cli/0.1/jamira-c
 chmod 755 /usr/local/bin/jamira
 ----
 
+## Installation using JBang
+
+Jamira can be installed and run with jbang - it will even setup java for you if you do not have that available.
+
+---
+curl -Ls sh.jbang.dev | bash -s app install jamira@tomitribe/jamira
+jamira
+---
+
+## Completion 
+
 Additionally, if you want command completion you can add the following to your `~/.bash_profile`, `~/.bashrc` or similar environment setup scripts:
 
 ----
