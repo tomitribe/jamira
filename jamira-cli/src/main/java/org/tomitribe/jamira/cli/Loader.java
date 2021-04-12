@@ -25,6 +25,7 @@ public class Loader implements org.tomitribe.crest.api.Loader {
     public Iterator<Class<?>> iterator() {
         return Arrays.asList(
                 BulkCreateCommand.class,
+                UpdateCommand.class,
                 AccountCommand.class,
                 ListCommand.class,
                 CreateCommand.class

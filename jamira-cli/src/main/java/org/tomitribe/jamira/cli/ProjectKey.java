@@ -15,6 +15,7 @@
  */
 package org.tomitribe.jamira.cli;
 
+import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -22,4 +23,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class ProjectKey {
     private final String key;
+
+    public BasicProject asBasicProject() {
+        return new BasicProject(null, key, null, null);
+    }
 }
