@@ -15,31 +15,31 @@
  */
 package org.tomitribe.jamira.cli;
 
-import org.tomitribe.util.dir.Mkdir;
-
 import java.io.File;
 import java.util.stream.Stream;
+
+import org.tomitribe.util.dir.Mkdir;
 
 public interface Jamira extends org.tomitribe.util.dir.Dir {
 
     @Mkdir
     Cache cache(final String name);
 
-    default Cache cache(final Account account) {
-        return cache(account.getName());
+    public static Cache cache(Jamira jamira, final Account account) {
+        return jamira.cache(account.getName());
     }
 
-    default Account account() {
-        return account("default");
+    public static Account account(Jamira jamira) {
+        return account(jamira, "default");
     }
 
-    default Account account(final String name) {
-        final File file = file(name + ".properties");
+    public static Account account(Jamira jamira, final String name) {
+        final File file = jamira.file(name + ".properties");
         return Account.load(file);
     }
 
-    default Stream<Account> accounts() {
-        return files()
+    public static Stream<Account> accounts(Jamira jamira) {
+        return jamira.files()
                 .filter(file -> file.getName().endsWith(".properties"))
                 .map(Account::load);
     }

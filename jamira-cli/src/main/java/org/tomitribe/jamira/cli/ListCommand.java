@@ -16,16 +16,20 @@
  */
 package org.tomitribe.jamira.cli;
 
+import org.tomitribe.crest.api.Command;
+import org.tomitribe.crest.api.Default;
+import org.tomitribe.crest.api.Option;
+
 import com.atlassian.jira.rest.client.api.GroupRestClient;
 import com.atlassian.jira.rest.client.api.MetadataRestClient;
 import com.atlassian.jira.rest.client.api.SearchRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.Project;
-import org.tomitribe.crest.api.Command;
-import org.tomitribe.crest.api.Default;
-import org.tomitribe.crest.api.Option;
+
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @Command("list")
+@RegisterForReflection
 public class ListCommand {
 
     @Command("subtasks")

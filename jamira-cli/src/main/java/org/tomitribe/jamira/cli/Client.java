@@ -15,6 +15,14 @@
  */
 package org.tomitribe.jamira.cli;
 
+import java.net.URI;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import org.tomitribe.jamira.cli.cache.CachedMetadataRestClient;
+
 import com.atlassian.jira.rest.client.api.AuditRestClient;
 import com.atlassian.jira.rest.client.api.ComponentRestClient;
 import com.atlassian.jira.rest.client.api.GroupRestClient;
@@ -32,15 +40,9 @@ import com.atlassian.jira.rest.client.api.VersionRestClient;
 import com.atlassian.jira.rest.client.api.domain.IssueType;
 import com.atlassian.jira.rest.client.api.domain.Priority;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+
 import io.atlassian.util.concurrent.Promise;
 import lombok.Data;
-import org.tomitribe.jamira.cli.cache.CachedMetadataRestClient;
-
-import java.net.URI;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @Data
 public class Client {
@@ -104,7 +106,7 @@ public class Client {
     }
 
     public MetadataRestClient getMetadataClient() {
-        return new CachedMetadataRestClient(restClient.getMetadataClient(), Home.get().jamira().cache(account));
+        return new CachedMetadataRestClient(restClient.getMetadataClient(), Jamira.cache(Home.get().jamira(), account));
     }
 
     public SearchRestClient getSearchClient() {

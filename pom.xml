@@ -54,6 +54,7 @@
             <exclude>**/*.json</exclude>
             <exclude>src/test/resources/**</exclude>
             <exclude>src/main/resources/META-INF/services/**</exclude>
+            <exclude>src/main/resources/application.properties</exclude>
           </excludes>
         </configuration>
       </plugin>

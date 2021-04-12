@@ -240,3 +240,28 @@ TOMEE-3029
 TOMEE-3030
 
 ----
+
+## Running as a Native Binary
+
+_NOTE:_ Native binary support is at proof-of-concept level_ currently.
+Not all commands are enabled for native mode yet.
+
+Using https://quarkus.io/[Quarkus] and https://www.graalvm.org/[GraalVM],
+Jamira can be compiled down to platform specific native binaries,
+resulting in faster execution times, as the overhead of starting up the JVM is avoided.
+
+To build a native Jamira binary, make sure to have GraalVM installed,
+https://quarkus.io/guides/building-native-image[as described] in the Quarkus documentation.
+Then run the build using the _native_ profile:
+
+----
+mvn clean install -Pnative
+----
+
+The build will take some time, after which you can find a fully self-contained native binary under _jamira-cli-0.2-SNAPSHOT-runner_.
+Here's a comparison of execution times from a MacBook Pro 2014 which show the improvements you can expect:
+
+----
+time ./jamira-cli/target/jamira list subtasks OPENEJB-142  3.51s user 0.30s system 133% cpu 2.851 total
+time ./jamira-cli/target/jamira-cli-0.2-SNAPSHOT-runner list subtasks OPENEJB-142  0.06s user 0.06s system 12% cpu 1.022 total
+----

@@ -16,6 +16,18 @@
  */
 package org.tomitribe.jamira.cli;
 
+import java.io.InputStream;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.tomitribe.crest.api.Command;
+import org.tomitribe.crest.api.Default;
+import org.tomitribe.crest.api.In;
+import org.tomitribe.crest.api.Option;
+import org.tomitribe.crest.api.PrintOutput;
+import org.tomitribe.util.IO;
+
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import com.atlassian.jira.rest.client.api.domain.BasicProject;
@@ -26,19 +38,11 @@ import com.atlassian.jira.rest.client.api.domain.IssueType;
 import com.atlassian.jira.rest.client.api.domain.input.FieldInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
-import org.tomitribe.crest.api.Command;
-import org.tomitribe.crest.api.Default;
-import org.tomitribe.crest.api.In;
-import org.tomitribe.crest.api.Option;
-import org.tomitribe.crest.api.PrintOutput;
-import org.tomitribe.util.IO;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @Command("bulk-create")
+@RegisterForReflection
 public class BulkCreateCommand {
 
     /**
