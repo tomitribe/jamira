@@ -4,6 +4,30 @@ Jamira is a command-line API for Atlassian JIRA using the Tomitribe CREST librar
 
 ## Installation
 
+Jamira can be downloaded as a ready-to-go executable from Maven Central
+
+----
+curl https://repo1.maven.org/maven2/org/tomitribe/jamira/jamira-cli/0.1/jamira-cli-0.1.sh > /usr/local/bin/jamira
+chmod 755 /usr/local/bin/jamira
+----
+
+## Installation using JBang
+
+Jamira can be installed and run with jbang - it will even setup java for you if you do not have that available.
+
+---
+curl -Ls sh.jbang.dev | bash -s app install jamira@tomitribe/jamira
+jamira
+---
+
+## Completion 
+
+Additionally, if you want command completion you can add the following to your `~/.bash_profile`, `~/.bashrc` or similar environment setup scripts:
+
+----
+source "$(jamira _completion -f)"
+----
+
 ## Setup
 
 Jamira has accounts in a similar way git has remotes.  An account can be setup using the `account add` command
@@ -16,18 +40,18 @@ The `Name` value should be any short identifier with no spaces and all lowercase
 
 Example setup:
 
-````
+----
 $ jamira account add apache elmerfudd "GetTh3Rabb1t" https://issues.apache.org/jira
 
 $ jamira account list
   name    username             serverUri
 -------- ----------- --------------------------------
  apache   elmerfudd   https://issues.apache.org/jira
-````
+----
 
 ## Commands
 
-````
+----
 $ jamira
 Commands:
 
@@ -36,11 +60,11 @@ Commands:
    create
    help
    list
-````
+----
 
 ### List
 
-````
+----
 $ jamira list
 Usage: list [subcommand] [options]
 
@@ -60,13 +84,13 @@ Sub commands:
    subtasks
    users
    versions
-````
+----
 
 #### List Priorities
 
 For example to list all of the priorities setup in the JIRA install:
 
-````
+----
 $ ./jamira-cli/target/jamira list priorities
   id       name                                                     description
 ------- ---------- --------------------------------------------------------------------------------------------------------------
@@ -84,13 +108,13 @@ $ ./jamira-cli/target/jamira list priorities
  10102   P2         Default priority. Will be triaged and planned according to community practices.
  10103   P3         Non-urgent bugs, features, and improvements
  10104   P4          Trivial items, spelling errors, etc.
-````
+----
 
 #### List Subtasks
 
 To list all of the subtasks for a specific issue
 
-````
+----
 $ jamira list subtasks OPENEJB-142
    issueKey                           summary                          status.name
 -------------- ------------------------------------------------------ -------------
@@ -104,13 +128,13 @@ $ jamira list subtasks OPENEJB-142
  OPENEJB-152    iTest: StatelessRemoteIntfcTests                       Closed
  OPENEJB-153    iTest: StatelessLocalIntfcTests                        Closed
  OPENEJB-154    iTest: StatelessHomeHandleTests                        Closed
-````
+----
 
 ### Create
 
 Can create issues, versions and components.  For common issue types there are convenience commands; bug, improvement, new-feature, task, subtask.
 
-````
+----
 $ jamira create
 Missing sub-command
 Usage: create [subcommand] [options]
@@ -127,13 +151,13 @@ Sub commands:
    version
    wish
 
-````
+----
 
 #### Create Sub-Task
 
 Sub-tasks can be created by simply specifying the parent issue key and supplying a text summary to use for the new issue
 
-````
+----
 $ jamira create subtask
 Missing argument: IssueKey
 
@@ -149,19 +173,20 @@ Options:
   --fix-version=<String[]>          The names of the versions affected by the issue
   --priority=<String>               The name of the priority for the issue
   --reporter=<String>               Username of the person who is the reporter of the issue
-````
+----
+
 
 For example:
 
-````
+----
 jamira create subtask TOMEE-3002 "Test caching"
-````
+----
 
 ### Bulk-create
 
 When you have several issues you need to create it's advised to use the bulk API.
 
-````
+----
 $ jamira bulk-create
 Missing sub-command
 Usage: bulk-create [subcommand] [options]
@@ -171,7 +196,8 @@ Sub commands:
    issues
    subtasks
 
-````
+----
+
 
 #### Bulk-create Subtasks
 
@@ -179,7 +205,7 @@ Subtasks can be created in bulk using the following command.  The summary for ea
 from the piped input stream.  This allows several lines of text to be generated on the command line
 and each line becomes a subtask.
 
-````
+----
 $ jamira bulk-create subtasks
 Missing argument: IssueKey
 
@@ -195,11 +221,11 @@ Options:
   --priority=<String>               The name of the priority for the issue
   --reporter=<String>               Username of the person who is the reporter of the issue
 
-````
+----
 
 For example:
 
-````
+----
 $ echo -e "Bulk insert"{1..10}"\n"
 Bulk insert1
  Bulk insert2
@@ -224,4 +250,4 @@ TOMEE-3028
 TOMEE-3029
 TOMEE-3030
 
-````
+----
