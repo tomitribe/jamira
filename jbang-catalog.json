@@ -1,0 +1,9 @@
+{
+  "catalogs": {},
+  "aliases": {
+    "jamira": {
+      "script-ref": "org.tomitribe.jamira:jamira-cli:LATEST:shaded"
+    }
+  },
+  "templates": {}
+}
