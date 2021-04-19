@@ -15,12 +15,12 @@
  */
 package org.tomitribe.jamira.cli;
 
+import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.jira.rest.client.api.AuditRestClient;
 import com.atlassian.jira.rest.client.api.ComponentRestClient;
 import com.atlassian.jira.rest.client.api.GroupRestClient;
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
 import com.atlassian.jira.rest.client.api.MetadataRestClient;
 import com.atlassian.jira.rest.client.api.MyPermissionsRestClient;
 import com.atlassian.jira.rest.client.api.ProjectRestClient;
@@ -31,7 +31,7 @@ import com.atlassian.jira.rest.client.api.UserRestClient;
 import com.atlassian.jira.rest.client.api.VersionRestClient;
 import com.atlassian.jira.rest.client.api.domain.IssueType;
 import com.atlassian.jira.rest.client.api.domain.Priority;
-import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+import org.tomitribe.jamira.cli.http.CustomAsynchronousJiraRestClientFactory;
 import io.atlassian.util.concurrent.Promise;
 import lombok.Data;
 import org.tomitribe.jamira.cli.cache.CachedMetadataRestClient;
@@ -39,6 +39,7 @@ import org.tomitribe.jamira.cli.cache.CachedMetadataRestClient;
 import java.net.URI;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -50,9 +51,12 @@ public class Client {
 
     public Client(final Account account) {
         this.account = account;
-        final JiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
+        final CustomAsynchronousJiraRestClientFactory factory = new CustomAsynchronousJiraRestClientFactory();
         final URI jiraServerUri = account.getServerUri();
-        restClient = factory.createWithBasicHttpAuthentication(jiraServerUri, account.getUsername(), account.getPassword());
+        final HttpClientOptions options = new HttpClientOptions();
+        //XXX set it to 60 minutes here but for future versions could allow the user to configure this timeout
+        options.setSocketTimeout(60, TimeUnit.MINUTES);
+        restClient = factory.createWithBasicHttpAuthentication(jiraServerUri, account.getUsername(), account.getPassword(), options);
     }
 
     public IssueType getIssueType(final String name) {
