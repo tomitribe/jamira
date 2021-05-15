@@ -30,8 +30,11 @@ import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.api.domain.input.VersionInputBuilder;
 import org.tomitribe.crest.api.Command;
 import org.tomitribe.crest.api.Default;
+import org.tomitribe.crest.api.In;
 import org.tomitribe.crest.api.Option;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -87,12 +90,14 @@ public class CreateCommand {
         return String.format("%s %s", component.getId(), component.getName());
     }
 
+    //CHECKSTYLE:OFF
+
     /**
      * Create a subtask for the specified JIRA issue
      *
      * @param parentKey The issue key for the parent issue. Example TOMEE-123
      * @param summary  The title of the subtask
-     * @param description Long description of the issue
+     * @param descriptionArg Long description of the issue
      * @param assignee Username of the person to which the issue should be assigned
      * @param reporter Username of the person who is the reporter of the issue
      * @param priority The name of the priority for the issue.  See the `list priorities` command
@@ -104,19 +109,22 @@ public class CreateCommand {
     @Command("subtask")
     public String subtask(final IssueKey parentKey,
                           final String summary,
-                          @Option("description") final String description,
+                          @Option("description") String descriptionArg,
                           @Option("assignee") final String assignee,
                           @Option("reporter") final String reporter,
                           @Option("priority") final String priority,
                           @Option("affected-version") final List<String> affectedVersions,
                           @Option("fix-version") final List<String> fixVersions,
                           @Option("component") final List<String> components,
+                          @In final InputStream pipedInput,
                           @Option("account") @Default("default") final Account account) throws Exception {
 
         final Client client = account.getClient();
 
         final Issue parent = client.getIssueClient().getIssue(parentKey.getKey()).get();
         final IssueType type = client.getIssueType("sub-task");
+
+        final String description = Input.read(pipedInput, descriptionArg);
 
         final IssueInputBuilder issue = new IssueInputBuilder(parent.getProject(), type, summary);
         if (affectedVersions != null) issue.setAffectedVersionsNames(affectedVersions);
@@ -134,7 +142,6 @@ public class CreateCommand {
         return createdIssue.getKey().trim();
     }
 
-    //CHECKSTYLE:OFF
 
     /**
      * Create a JIRA issue of type task
@@ -159,11 +166,12 @@ public class CreateCommand {
                        @Option("affected-version") final List<String> affectedVersions,
                        @Option("fix-version") final List<String> fixVersions,
                        @Option("component") final List<String> components,
+                       @In final InputStream pipedInput,
                        @Option("account") @Default("default") final Account account) throws Exception {
 
         return createIssue("task", projectKey, summary, description, assignee,
                 reporter, priority, affectedVersions, fixVersions,
-                components, account);
+                components, pipedInput, account);
     }
 
     /**
@@ -189,11 +197,12 @@ public class CreateCommand {
                               @Option("affected-version") final List<String> affectedVersions,
                               @Option("fix-version") final List<String> fixVersions,
                               @Option("component") final List<String> components,
+                              @In final InputStream pipedInput,
                               @Option("account") @Default("default") final Account account) throws Exception {
 
         return createIssue("improvement", projectKey, summary, description, assignee,
                 reporter, priority, affectedVersions, fixVersions,
-                components, account);
+                components, pipedInput, account);
     }
 
     /**
@@ -219,11 +228,12 @@ public class CreateCommand {
                        @Option("affected-version") final List<String> affectedVersions,
                        @Option("fix-version") final List<String> fixVersions,
                        @Option("component") final List<String> components,
+                       @In final InputStream pipedInput,
                        @Option("account") @Default("default") final Account account) throws Exception {
 
         return createIssue("wish", projectKey, summary, description, assignee,
                 reporter, priority, affectedVersions, fixVersions,
-                components, account);
+                components, pipedInput, account);
     }
 
     /**
@@ -249,11 +259,12 @@ public class CreateCommand {
                       @Option("affected-version") final List<String> affectedVersions,
                       @Option("fix-version") final List<String> fixVersions,
                       @Option("component") final List<String> components,
+                      @In final InputStream pipedInput,
                       @Option("account") @Default("default") final Account account) throws Exception {
 
         return createIssue("bug", projectKey, summary, description, assignee,
                 reporter, priority, affectedVersions, fixVersions,
-                components, account);
+                components, pipedInput, account);
     }
 
     /**
@@ -281,11 +292,12 @@ public class CreateCommand {
                         @Option("affected-version") final List<String> affectedVersions,
                         @Option("fix-version") final List<String> fixVersions,
                         @Option("component") final List<String> components,
+                        @In final InputStream pipedInput,
                         @Option("account") @Default("default") final Account account) throws Exception {
 
         return createIssue(type, projectKey, summary, description, assignee,
                 reporter, priority, affectedVersions, fixVersions,
-                components, account);
+                components, pipedInput, account);
     }
 
     @Command("new-feature")
@@ -298,22 +310,26 @@ public class CreateCommand {
                              @Option("affected-version") final List<String> affectedVersions,
                              @Option("fix-version") final List<String> fixVersions,
                              @Option("component") final List<String> components,
+                             @In final InputStream pipedInput,
                              @Option("account") @Default("default") final Account account) throws Exception {
 
         return createIssue("new feature", projectKey, summary, description, assignee,
                 reporter, priority, affectedVersions, fixVersions,
-                components, account);
+                components, pipedInput, account);
     }
 
     private static String createIssue(final String typeName, final ProjectKey projectKey,
-                                      final String summary, final String description,
+                                      final String summary, final String descriptionArg,
                                       final String assignee, final String reporter,
                                       final String priority, final List<String> affectedVersions,
                                       final List<String> fixVersions, final List<String> components,
-                                      final Account account) throws InterruptedException, java.util.concurrent.ExecutionException {
+                                      final InputStream pipedInput,
+                                      final Account account) throws InterruptedException, java.util.concurrent.ExecutionException, IOException {
         final Client client = account.getClient();
         final Project project = client.getProjectClient().getProject(projectKey.getKey()).get();
         final IssueType type = client.getIssueType(typeName);
+
+        final String description = Input.read(pipedInput, descriptionArg);
 
         final IssueInputBuilder issue = new IssueInputBuilder(project, type, summary);
 
