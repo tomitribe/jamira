@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli;
+package org.tomitribe.jamira.core;
 
 import org.tomitribe.crest.api.Exit;
 
-@Exit(6)
-public class NoSuchPriorityException extends RuntimeException {
-    public NoSuchPriorityException(final String name) {
-        super("No such priority: " + name);
+@Exit(7)
+public class NoIssueSummariesSuppliedException extends RuntimeException {
+    public NoIssueSummariesSuppliedException() {
+        super("Expected issue summaries supplied via piped input");
     }
 }

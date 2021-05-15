@@ -31,6 +31,11 @@ import org.tomitribe.crest.api.Default;
 import org.tomitribe.crest.api.In;
 import org.tomitribe.crest.api.Option;
 import org.tomitribe.crest.api.PrintOutput;
+import org.tomitribe.jamira.core.Account;
+import org.tomitribe.jamira.core.Client;
+import org.tomitribe.jamira.core.IssueKey;
+import org.tomitribe.jamira.core.NoIssueSummariesSuppliedException;
+import org.tomitribe.jamira.core.ProjectKey;
 import org.tomitribe.util.IO;
 
 import java.io.InputStream;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli;
+package org.tomitribe.jamira.core;
 
 import lombok.Data;
 import org.tomitribe.util.Files;

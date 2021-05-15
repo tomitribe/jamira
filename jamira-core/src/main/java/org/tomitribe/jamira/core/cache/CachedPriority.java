@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli.cache;
+package org.tomitribe.jamira.core.cache;
 
-import com.atlassian.jira.rest.client.api.domain.Resolution;
+import com.atlassian.jira.rest.client.api.domain.Priority;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,23 +27,27 @@ import java.net.URI;
 @Builder(builderClassName = "Builder")
 @NoArgsConstructor
 @AllArgsConstructor
-public class CachedResolution {
+public class CachedPriority {
 
     private URI self;
     private String name;
     private Long id;
+    private String statusColor;
     private String description;
+    private URI iconUrl;
 
-    public Resolution toResolution() {
-        return new Resolution(self, id, name, description);
+    public Priority toPriority() {
+        return new Priority(self, id, name, statusColor, description, iconUrl);
     }
 
-    public static CachedResolution fromResolution(final Resolution resolution) {
-        return CachedResolution.builder()
-                .self(resolution.getSelf())
-                .id(resolution.getId())
-                .name(resolution.getName())
-                .description(resolution.getDescription())
+    public static CachedPriority fromPriority(final Priority priority) {
+        return CachedPriority.builder()
+                .self(priority.getSelf())
+                .id(priority.getId())
+                .name(priority.getName())
+                .description(priority.getDescription())
+                .iconUrl(priority.getIconUri())
+                .statusColor(priority.getStatusColor())
                 .build();
     }
 }

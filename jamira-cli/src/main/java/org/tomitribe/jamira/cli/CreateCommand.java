@@ -32,6 +32,11 @@ import org.tomitribe.crest.api.Command;
 import org.tomitribe.crest.api.Default;
 import org.tomitribe.crest.api.In;
 import org.tomitribe.crest.api.Option;
+import org.tomitribe.jamira.core.Account;
+import org.tomitribe.jamira.core.Client;
+import org.tomitribe.jamira.core.Input;
+import org.tomitribe.jamira.core.IssueKey;
+import org.tomitribe.jamira.core.ProjectKey;
 
 import java.io.IOException;
 import java.io.InputStream;

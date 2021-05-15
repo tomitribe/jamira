@@ -13,18 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli;
+package org.tomitribe.jamira.core;
 
-import com.atlassian.jira.rest.client.api.domain.BasicProject;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import org.tomitribe.util.dir.Mkdir;
+import org.tomitribe.util.dir.Name;
 
-@Data
-@AllArgsConstructor
-public class ProjectKey {
-    private final String key;
+import java.io.File;
 
-    public BasicProject asBasicProject() {
-        return new BasicProject(null, key, null, null);
+public interface Home {
+
+    @Mkdir
+    @Name(".jamira")
+    Jamira jamira();
+
+    static Home get() {
+        return from(System.getProperty("user.home"));
+    }
+
+    static Home from(final String path) {
+        return from(new File(path).getAbsoluteFile());
+    }
+
+    static Home from(final File file) {
+        return org.tomitribe.util.dir.Dir.of(Home.class, file);
     }
 }

@@ -13,25 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli.cache;
+package org.tomitribe.jamira.core;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
+import org.tomitribe.crest.api.Exit;
 
-public class JsonbInstances {
-
-    private JsonbInstances() {
-    }
-
-    private static final ThreadLocal<Jsonb> INSTANCES = ThreadLocal.withInitial(() -> {
-        final JsonbConfig config = new JsonbConfig()
-                .setProperty("johnzon.failOnMissingCreatorValues", false)
-                .withFormatting(true);
-        return JsonbBuilder.create(config);
-    });
-
-    public static Jsonb get() {
-        return INSTANCES.get();
+@Exit(1)
+public class NoAccountSetupException extends IllegalArgumentException {
+    public NoAccountSetupException() {
+        super("No jira accounts configured.  Run `account add` to configure a jira account");
     }
 }

@@ -17,6 +17,12 @@ package org.tomitribe.jamira.cli;
 
 import lombok.Data;
 import org.tomitribe.crest.api.Command;
+import org.tomitribe.jamira.core.Account;
+import org.tomitribe.jamira.core.AccountExistsException;
+import org.tomitribe.jamira.core.Formatting;
+import org.tomitribe.jamira.core.Home;
+import org.tomitribe.jamira.core.Jamira;
+import org.tomitribe.jamira.core.NoSuchAccountExistsException;
 
 import java.io.IOException;
 import java.net.URI;

@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli.cache;
+package org.tomitribe.jamira.core.cache;
 
-import com.atlassian.jira.rest.client.api.StatusCategory;
-import com.atlassian.jira.rest.client.api.domain.Status;
+import com.atlassian.jira.rest.client.api.domain.Resolution;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,27 +27,23 @@ import java.net.URI;
 @Builder(builderClassName = "Builder")
 @NoArgsConstructor
 @AllArgsConstructor
-public class CachedStatus {
+public class CachedResolution {
 
     private URI self;
     private String name;
     private Long id;
     private String description;
-    private URI iconUrl;
-    private StatusCategory statusCategory;
 
-    public Status toStatus() {
-        return new Status(self, id, name, description, iconUrl, statusCategory);
+    public Resolution toResolution() {
+        return new Resolution(self, id, name, description);
     }
 
-    public static CachedStatus fromStatus(final Status status) {
-        return CachedStatus.builder()
-                .self(status.getSelf())
-                .id(status.getId())
-                .name(status.getName())
-                .description(status.getDescription())
-                .iconUrl(status.getIconUrl())
-                .statusCategory(status.getStatusCategory())
+    public static CachedResolution fromResolution(final Resolution resolution) {
+        return CachedResolution.builder()
+                .self(resolution.getSelf())
+                .id(resolution.getId())
+                .name(resolution.getName())
+                .description(resolution.getDescription())
                 .build();
     }
 }

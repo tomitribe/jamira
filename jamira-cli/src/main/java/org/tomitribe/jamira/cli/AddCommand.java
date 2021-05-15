@@ -24,13 +24,14 @@ import org.tomitribe.crest.api.Command;
 import org.tomitribe.crest.api.Default;
 import org.tomitribe.crest.api.In;
 import org.tomitribe.crest.api.Option;
+import org.tomitribe.jamira.core.Account;
+import org.tomitribe.jamira.core.Client;
+import org.tomitribe.jamira.core.IssueKey;
 import org.tomitribe.util.IO;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.concurrent.ExecutionException;
 
 @Command("add")

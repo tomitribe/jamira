@@ -24,6 +24,11 @@ import com.atlassian.jira.rest.client.api.domain.Project;
 import org.tomitribe.crest.api.Command;
 import org.tomitribe.crest.api.Default;
 import org.tomitribe.crest.api.Option;
+import org.tomitribe.jamira.core.Account;
+import org.tomitribe.jamira.core.Client;
+import org.tomitribe.jamira.core.Formatting;
+import org.tomitribe.jamira.core.IssueKey;
+import org.tomitribe.jamira.core.ProjectKey;
 
 @Command("list")
 public class ListCommand {

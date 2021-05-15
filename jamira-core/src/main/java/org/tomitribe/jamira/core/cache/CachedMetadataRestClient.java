@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli.cache;
+package org.tomitribe.jamira.core.cache;
 
 import com.atlassian.jira.rest.client.api.MetadataRestClient;
 import com.atlassian.jira.rest.client.api.domain.Field;
@@ -24,7 +24,7 @@ import com.atlassian.jira.rest.client.api.domain.Resolution;
 import com.atlassian.jira.rest.client.api.domain.ServerInfo;
 import com.atlassian.jira.rest.client.api.domain.Status;
 import io.atlassian.util.concurrent.Promise;
-import org.tomitribe.jamira.cli.Cache;
+import org.tomitribe.jamira.core.Cache;
 
 import java.net.URI;
 import java.util.List;
@@ -32,7 +32,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.tomitribe.jamira.cli.Client.stream;
+import static org.tomitribe.jamira.core.Client.stream;
 
 public class CachedMetadataRestClient implements MetadataRestClient {
 

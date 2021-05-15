@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli;
+package org.tomitribe.jamira.core;
 
 import org.tomitribe.crest.api.Exit;
 
-@Exit(3)
-public class NoSuchAccountExistsException extends IllegalStateException {
-    public NoSuchAccountExistsException(final String name) {
-        super("No such account exists: " + name);
+@Exit(5)
+public class NoSuchIssueTypeException extends RuntimeException {
+    public NoSuchIssueTypeException(final String name) {
+        super("No such issue type: " + name);
     }
 }

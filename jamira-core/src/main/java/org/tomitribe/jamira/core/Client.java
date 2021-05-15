@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli;
+package org.tomitribe.jamira.core;
 
 import com.atlassian.jira.rest.client.api.AuditRestClient;
 import com.atlassian.jira.rest.client.api.ComponentRestClient;
@@ -34,7 +34,7 @@ import com.atlassian.jira.rest.client.api.domain.Priority;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import io.atlassian.util.concurrent.Promise;
 import lombok.Data;
-import org.tomitribe.jamira.cli.cache.CachedMetadataRestClient;
+import org.tomitribe.jamira.core.cache.CachedMetadataRestClient;
 
 import java.net.URI;
 import java.util.Spliterator;

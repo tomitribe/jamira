@@ -13,28 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli;
+package org.tomitribe.jamira.core;
 
-import org.tomitribe.util.dir.Mkdir;
-import org.tomitribe.util.dir.Name;
+import org.tomitribe.crest.api.Exit;
 
-import java.io.File;
-
-public interface Home {
-
-    @Mkdir
-    @Name(".jamira")
-    Jamira jamira();
-
-    static Home get() {
-        return from(System.getProperty("user.home"));
-    }
-
-    static Home from(final String path) {
-        return from(new File(path).getAbsoluteFile());
-    }
-
-    static Home from(final File file) {
-        return org.tomitribe.util.dir.Dir.of(Home.class, file);
+@Exit(2)
+public class AccountExistsException extends IllegalStateException {
+    public AccountExistsException(final String name) {
+        super("Account exists: " + name);
     }
 }

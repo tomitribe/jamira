@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli.cache;
+package org.tomitribe.jamira.core.cache;
 
-import com.atlassian.jira.rest.client.api.domain.Priority;
+import com.atlassian.jira.rest.client.api.domain.IssueType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,27 +27,27 @@ import java.net.URI;
 @Builder(builderClassName = "Builder")
 @NoArgsConstructor
 @AllArgsConstructor
-public class CachedPriority {
+public class CachedIssueType {
 
     private URI self;
-    private String name;
     private Long id;
-    private String statusColor;
+    private String name;
+    private boolean isSubtask;
     private String description;
-    private URI iconUrl;
+    private URI iconUri;
 
-    public Priority toPriority() {
-        return new Priority(self, id, name, statusColor, description, iconUrl);
+    public IssueType toIssueType() {
+        return new IssueType(self, id, name, isSubtask, description, iconUri);
     }
 
-    public static CachedPriority fromPriority(final Priority priority) {
-        return CachedPriority.builder()
-                .self(priority.getSelf())
-                .id(priority.getId())
-                .name(priority.getName())
-                .description(priority.getDescription())
-                .iconUrl(priority.getIconUri())
-                .statusColor(priority.getStatusColor())
+    public static CachedIssueType fromIssueType(final IssueType issueType) {
+        return CachedIssueType.builder()
+                .self(issueType.getSelf())
+                .id(issueType.getId())
+                .name(issueType.getName())
+                .isSubtask(issueType.isSubtask())
+                .description(issueType.getDescription())
+                .iconUri(issueType.getIconUri())
                 .build();
     }
 }

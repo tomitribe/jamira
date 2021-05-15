@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli;
+package org.tomitribe.jamira.core;
 
-import org.tomitribe.crest.api.Exit;
+import com.atlassian.jira.rest.client.api.domain.BasicProject;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@Exit(5)
-public class NoSuchIssueTypeException extends RuntimeException {
-    public NoSuchIssueTypeException(final String name) {
-        super("No such issue type: " + name);
+@Data
+@AllArgsConstructor
+public class ProjectKey {
+    private final String key;
+
+    public BasicProject asBasicProject() {
+        return new BasicProject(null, key, null, null);
     }
 }

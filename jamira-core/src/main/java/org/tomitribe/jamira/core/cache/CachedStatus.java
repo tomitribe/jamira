@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli.cache;
+package org.tomitribe.jamira.core.cache;
 
-import com.atlassian.jira.rest.client.api.domain.IssueType;
+import com.atlassian.jira.rest.client.api.StatusCategory;
+import com.atlassian.jira.rest.client.api.domain.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,27 +28,27 @@ import java.net.URI;
 @Builder(builderClassName = "Builder")
 @NoArgsConstructor
 @AllArgsConstructor
-public class CachedIssueType {
+public class CachedStatus {
 
     private URI self;
-    private Long id;
     private String name;
-    private boolean isSubtask;
+    private Long id;
     private String description;
-    private URI iconUri;
+    private URI iconUrl;
+    private StatusCategory statusCategory;
 
-    public IssueType toIssueType() {
-        return new IssueType(self, id, name, isSubtask, description, iconUri);
+    public Status toStatus() {
+        return new Status(self, id, name, description, iconUrl, statusCategory);
     }
 
-    public static CachedIssueType fromIssueType(final IssueType issueType) {
-        return CachedIssueType.builder()
-                .self(issueType.getSelf())
-                .id(issueType.getId())
-                .name(issueType.getName())
-                .isSubtask(issueType.isSubtask())
-                .description(issueType.getDescription())
-                .iconUri(issueType.getIconUri())
+    public static CachedStatus fromStatus(final Status status) {
+        return CachedStatus.builder()
+                .self(status.getSelf())
+                .id(status.getId())
+                .name(status.getName())
+                .description(status.getDescription())
+                .iconUrl(status.getIconUrl())
+                .statusCategory(status.getStatusCategory())
                 .build();
     }
 }

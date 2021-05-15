@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli;
+package org.tomitribe.jamira.core;
 
-import org.tomitribe.jamira.cli.cache.JsonbInstances;
+import org.tomitribe.jamira.core.cache.JsonbInstances;
 import org.tomitribe.util.IO;
 import org.tomitribe.util.dir.Dir;
 import org.tomitribe.util.dir.Name;
@@ -49,6 +49,7 @@ public interface Cache extends Dir {
         public Entry(final File file, final Class<T> type) {
             this.file = file;
             this.type = type;
+            final Bar bar = new Bar();
         }
 
         public static long age(final File file) {

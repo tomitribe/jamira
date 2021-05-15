@@ -13,18 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli;
+package org.tomitribe.jamira.core.cache;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
 
-@Data
-@AllArgsConstructor
-public class IssueKey {
-    private final String key;
+public class JsonbInstances {
 
-    public ProjectKey getProjectKey() {
-        final String projectKey = key.replaceAll("-.*", "");
-        return new ProjectKey(projectKey);
+    private JsonbInstances() {
+    }
+
+    private static final ThreadLocal<Jsonb> INSTANCES = ThreadLocal.withInitial(() -> {
+        final JsonbConfig config = new JsonbConfig()
+                .setProperty("johnzon.failOnMissingCreatorValues", false)
+                .withFormatting(true);
+        return JsonbBuilder.create(config);
+    });
+
+    public static Jsonb get() {
+        return INSTANCES.get();
     }
 }

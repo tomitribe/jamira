@@ -13,13 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tomitribe.jamira.cli;
+package org.tomitribe.jamira.core;
 
-import org.tomitribe.crest.api.Exit;
-
-@Exit(1)
-public class NoAccountSetupException extends IllegalArgumentException {
-    public NoAccountSetupException() {
-        super("No jira accounts configured.  Run `account add` to configure a jira account");
-    }
+public class Bar {
 }
