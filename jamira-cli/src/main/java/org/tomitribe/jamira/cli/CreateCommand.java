@@ -97,7 +97,7 @@ public class CreateCommand {
      *
      * @param parentKey The issue key for the parent issue. Example TOMEE-123
      * @param summary  The title of the subtask
-     * @param descriptionArg Long description of the issue
+     * @param descriptionArg Long description of the issue.  Can also be piped to the command via stdin.
      * @param assignee Username of the person to which the issue should be assigned
      * @param reporter Username of the person who is the reporter of the issue
      * @param priority The name of the priority for the issue.  See the `list priorities` command
@@ -147,7 +147,7 @@ public class CreateCommand {
      * Create a JIRA issue of type task
      * @param projectKey Text key for the JIRA project. Example `TOMEE`
      * @param summary Text to use as the title of the issue
-     * @param description Long description of the issue
+     * @param description Long description of the issue.  Can also be piped to the command via stdin.
      * @param assignee Username of the person to which the issue should be assigned
      * @param reporter Username of the person who is the reporter of the issue
      * @param priority The name of the priority for the issue.  See the `list priorities` command
@@ -178,7 +178,7 @@ public class CreateCommand {
      * Create a JIRA issue of type improvement
      * @param projectKey Text key for the JIRA project. Example `TOMEE`
      * @param summary Text to use as the title of the issue
-     * @param description Long description of the issue
+     * @param description Long description of the issue.  Can also be piped to the command via stdin.
      * @param assignee Username of the person to which the issue should be assigned
      * @param reporter Username of the person who is the reporter of the issue
      * @param priority The name of the priority for the issue.  See the `list priorities` command
@@ -209,7 +209,7 @@ public class CreateCommand {
      * Create a JIRA issue of type wish
      * @param projectKey Text key for the JIRA project. Example `TOMEE`
      * @param summary Text to use as the title of the issue
-     * @param description Long description of the issue
+     * @param description Long description of the issue.  Can also be piped to the command via stdin.
      * @param assignee Username of the person to which the issue should be assigned
      * @param reporter Username of the person who is the reporter of the issue
      * @param priority The name of the priority for the issue.  See the `list priorities` command
@@ -240,7 +240,7 @@ public class CreateCommand {
      * Create a JIRA issue of type bug
      * @param projectKey Text key for the JIRA project. Example `TOMEE`
      * @param summary Text to use as the title of the issue
-     * @param description Long description of the issue
+     * @param description Long description of the issue.  Can also be piped to the command via stdin.
      * @param assignee Username of the person to which the issue should be assigned
      * @param reporter Username of the person who is the reporter of the issue
      * @param priority The name of the priority for the issue.  See the `list priorities` command
@@ -272,7 +272,7 @@ public class CreateCommand {
      * @param projectKey Text key for the JIRA project. Example `TOMEE`
      * @param summary Text to use as the title of the issue
      * @param type The name of the issue type.  See the `list issue-types` command
-     * @param description Long description of the issue
+     * @param description Long description of the issue.  Can also be piped to the command via stdin.
      * @param assignee Username of the person to which the issue should be assigned
      * @param reporter Username of the person who is the reporter of the issue
      * @param priority The name of the priority for the issue.  See the `list priorities` command
@@ -300,6 +300,19 @@ public class CreateCommand {
                 components, pipedInput, account);
     }
 
+    /**
+     * Create a JIRA issue of type bug
+     * @param projectKey Text key for the JIRA project. Example `TOMEE`
+     * @param summary Text to use as the title of the issue
+     * @param description Long description of the issue.  Can also be piped to the command via stdin.
+     * @param assignee Username of the person to which the issue should be assigned
+     * @param reporter Username of the person who is the reporter of the issue
+     * @param priority The name of the priority for the issue.  See the `list priorities` command
+     * @param affectedVersions  The names of the versions affected by the issue.  See the `list versions` command.  Flag may be repeated.
+     * @param fixVersions  The names of the versions affected by the issue.  See the `list versions` command.  Flag may be repeated.
+     * @param components  The component names relating to the issue.  See the `list components` command.  Flag may be repeated.
+     * @param account Shortname of the JIRA server
+     */
     @Command("new-feature")
     public String newFeature(final ProjectKey projectKey,
                              final String summary,
