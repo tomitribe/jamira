@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.tomitribe.jamira</groupId>
     <artifactId>jamira-parent</artifactId>
-    <version>0.4</version>
+    <version>0.5-SNAPSHOT</version>
   </parent>
 
   <artifactId>jamira-cli</artifactId>
@@ -31,7 +31,7 @@
     <dependency>
       <groupId>org.tomitribe.jamira</groupId>
       <artifactId>jamira-core</artifactId>
-      <version>0.4</version>
+      <version>0.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.tomitribe</groupId>
