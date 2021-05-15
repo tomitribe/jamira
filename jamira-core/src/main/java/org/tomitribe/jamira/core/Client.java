@@ -31,7 +31,7 @@ import com.atlassian.jira.rest.client.api.UserRestClient;
 import com.atlassian.jira.rest.client.api.VersionRestClient;
 import com.atlassian.jira.rest.client.api.domain.IssueType;
 import com.atlassian.jira.rest.client.api.domain.Priority;
-import org.tomitribe.jamira.cli.http.CustomAsynchronousJiraRestClientFactory;
+import org.tomitribe.jamira.core.http.CustomAsynchronousJiraRestClientFactory;
 import io.atlassian.util.concurrent.Promise;
 import lombok.Data;
 import org.tomitribe.jamira.core.cache.CachedMetadataRestClient;
