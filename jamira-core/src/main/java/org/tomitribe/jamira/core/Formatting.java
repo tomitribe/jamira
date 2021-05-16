@@ -21,6 +21,7 @@ import org.tomitribe.util.collect.ObjectMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Formatting {
@@ -29,17 +30,18 @@ public class Formatting {
     }
 
     public static <T> String[][] asTable(final Iterable<T> items, final String fields) {
+        return asTable(items, fields, "");
+    }
+
+    public static <T> String[][] asTable(final Iterable<T> items, final String fields, final String sort) {
         if ("all".equalsIgnoreCase(fields)) {
             return asTable(items);
         }
-        return asTable(items, fields.split("[ ,]+"));
+        
+        return asTable(items, fields.split("[ ,]+"), sort.split("[ ,]+"));
     }
 
-    public static <T> String[][] asTable(final Object object, final String[] fields) {
-        return null;
-    }
-
-    public static <T> String[][] asTable(final Iterable<T> items, final String[] fields) {
+    public static <T> String[][] asTable(final Iterable<T> items, final String[] fields, final String[] sort) {
         final List<List<String>> rows = new ArrayList<>();
 
         for (final T item : items) {
@@ -51,6 +53,8 @@ public class Formatting {
             }
             rows.add(row);
         }
+
+        rows.sort(compareFields(fields, sort));
 
         // sort the rows
 //        Collections.sort(rows,(a, b) -> {
@@ -69,6 +73,23 @@ public class Formatting {
 
 
         return data;
+    }
+
+    public static Comparator<List<String>> compareFields(final String[] fields, final String[] sort) {
+        return compareFields(Arrays.asList(fields), Arrays.asList(sort));
+    }
+
+    public static Comparator<List<String>> compareFields(final List<String> fields, final List<String> sort) {
+
+        Comparator<List<String>> comparator = (o1, o2) -> 0;
+
+        for (final String field : sort) {
+            final int i = fields.indexOf(field);
+            if (i < 0) continue;
+            comparator = comparator.thenComparing(strings -> strings.get(i));
+        }
+
+        return comparator;
     }
 
     public static <T> String[][] asTable(final Iterable<T> items) {

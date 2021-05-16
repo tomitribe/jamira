@@ -29,6 +29,7 @@ public class Loader implements org.tomitribe.crest.api.Loader {
                 AccountCommand.class,
                 ListCommand.class,
                 AddCommand.class,
+                SearchCommand.class,
                 CreateCommand.class
         ).iterator();
     }
