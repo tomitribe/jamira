@@ -36,37 +36,42 @@ public class ListCommand {
     @Command("subtasks")
     public String[][] subtasks(final IssueKey parent,
                                @Option("account") @Default("default") final Account account,
-                               @Option("fields") @Default("issueKey summary status.name") final String fields) throws Exception {
+                               @Option("fields") @Default("issueKey summary status.name") final String fields,
+                               @Option("sort") @Default("issueType.name priority.name status.name") final String sort
+    ) throws Exception {
         final Client client = account.getClient();
         final Issue issue = client.getIssueClient().getIssue(parent.getKey()).get();
-        return Formatting.asTable(issue.getSubtasks(), fields);
+        return Formatting.asTable(issue.getSubtasks(), fields, sort);
     }
 
     @Command("projects")
     public String[][] projects(
             @Option("account") @Default("default") final Account account,
-            @Option("fields") @Default("id key name") final String fields) throws Exception {
+            @Option("fields") @Default("id key name") final String fields,
+            @Option("sort") @Default("issueType.name priority.name status.name") final String sort) throws Exception {
         final Client client = account.getClient();
-        return Formatting.asTable(client.getProjectClient().getAllProjects().get(), fields);
+        return Formatting.asTable(client.getProjectClient().getAllProjects().get(), fields, sort);
     }
 
     @Command("versions")
     public String[][] versions(final ProjectKey projectKey,
                                @Option("account") @Default("default") final Account account,
-                               @Option("fields") @Default("name released releaseDate") final String fields) throws Exception {
+                               @Option("fields") @Default("name released releaseDate") final String fields,
+                               @Option("sort") @Default("issueType.name priority.name status.name") final String sort) throws Exception {
         final Client client = account.getClient();
         final Project project = client.getProjectClient().getProject(projectKey.getKey()).get();
-        return Formatting.asTable(project.getVersions(), fields);
+        return Formatting.asTable(project.getVersions(), fields, sort);
     }
 
     @Command("components")
     public String[][] components(final ProjectKey projectKey,
                                  @Option("account") @Default("default") final Account account,
-                                 @Option("fields") @Default("id name description") final String fields) throws Exception {
+                                 @Option("fields") @Default("id name description") final String fields,
+                                 @Option("sort") @Default("issueType.name priority.name status.name") final String sort) throws Exception {
 
         final Client client = account.getClient();
         final Project project = client.getProjectClient().getProject(projectKey.getKey()).get();
-        return Formatting.asTable(project.getComponents(), fields);
+        return Formatting.asTable(project.getComponents(), fields, sort);
     }
 
     /**
@@ -89,7 +94,8 @@ public class ListCommand {
             @Option("maxResults") final Integer maxResults,
             @Option("include-active") final Boolean includeActive,
             @Option("include-inactive") final Boolean includeInactive,
-            @Option("fields") @Default("name displayName timezone active") final String fields) throws Exception {
+            @Option("fields") @Default("name displayName timezone active") final String fields,
+            @Option("sort") @Default("displayName") final String sort) throws Exception {
         final Client client = account.getClient();
         return Formatting.asTable(client.getUserClient().findUsers(
                 username,
@@ -97,7 +103,7 @@ public class ListCommand {
                 maxResults,
                 includeActive,
                 includeInactive
-        ).get(), fields);
+        ).get(), fields, sort);
     }
 
     /**
@@ -121,85 +127,93 @@ public class ListCommand {
                              @Option("account") @Default("default") final Account account,
                              @Option("exclude") final String exclude,
                              @Option("maxResults") final Integer maxResults,
-                             @Option("username") final String userName,
-                             @Option("fields") @Default("id name description") final String fields) throws Exception {
+                             @Option("username") final String userName) throws Exception {
         final Client client = account.getClient();
         final GroupRestClient groupClient = client.getGroupClient();
-        return Formatting.asTable(groupClient.findGroups(query, exclude, maxResults, userName).get(), fields);
+        return Formatting.asTable(groupClient.findGroups(query, exclude, maxResults, userName).get());
     }
 
     @Command("project-roles")
     public String[][] projectRoles(final ProjectKey projectKey,
                                    @Option("account") @Default("default") final Account account,
-                                   @Option("fields") @Default("name") final String fields) throws Exception {
+                                   @Option("fields") @Default("name") final String fields,
+                                   @Option("sort") @Default("name") final String sort) throws Exception {
         final Client client = account.getClient();
         final Project project = client.getProjectClient().getProject(projectKey.getKey()).get();
-        return Formatting.asTable(project.getProjectRoles(), fields);
+        return Formatting.asTable(project.getProjectRoles(), fields, sort);
     }
 
     @Command("favourite-filters")
     public String[][] favouriteFilters(@Option("account") @Default("default") final Account account,
-                                       @Option("fields") @Default("id name jql") final String fields) throws Exception {
+                                       @Option("fields") @Default("id name jql") final String fields,
+                                       @Option("sort") @Default("name") final String sort) throws Exception {
         final Client client = account.getClient();
         final SearchRestClient searchClient = client.getSearchClient();
-        return Formatting.asTable(searchClient.getFavouriteFilters().get(), fields);
+        return Formatting.asTable(searchClient.getFavouriteFilters().get(), fields, sort);
     }
 
     @Command("issue-types")
     public String[][] issueTypes(@Option("account") @Default("default") final Account account,
-                                 @Option("fields") @Default("id name description") final String fields) throws Exception {
+                                 @Option("fields") @Default("id name description") final String fields,
+                                 @Option("sort") @Default("name") final String sort) throws Exception {
         final Client client = account.getClient();
         final MetadataRestClient metadataClient = client.getMetadataClient();
-        return Formatting.asTable(metadataClient.getIssueTypes().get(), fields);
+        return Formatting.asTable(metadataClient.getIssueTypes().get(), fields, sort);
     }
 
     @Command("issue-types")
     public String[][] issueTypes(final ProjectKey projectKey,
                                  @Option("account") @Default("default") final Account account,
-                                 @Option("fields") @Default("id name description") final String fields) throws Exception {
+                                 @Option("fields") @Default("id name description") final String fields,
+                                 @Option("sort") @Default("name") final String sort) throws Exception {
         final Client client = account.getClient();
         final Project project = client.getProjectClient().getProject(projectKey.getKey()).get();
-        return Formatting.asTable(project.getIssueTypes(), fields);
+        return Formatting.asTable(project.getIssueTypes(), fields, sort);
     }
 
     @Command("issue-link-types")
     public String[][] issueLinkTypes(@Option("account") @Default("default") final Account account,
-                                     @Option("fields") @Default("id name inward outward") final String fields) throws Exception {
+                                     @Option("fields") @Default("id name inward outward") final String fields,
+                                     @Option("sort") @Default("name") final String sort) throws Exception {
         final Client client = account.getClient();
         final MetadataRestClient metadataClient = client.getMetadataClient();
-        return Formatting.asTable(metadataClient.getIssueLinkTypes().get(), fields);
+        return Formatting.asTable(metadataClient.getIssueLinkTypes().get(), fields, sort);
     }
 
     @Command("statuses")
     public String[][] statuses(@Option("account") @Default("default") final Account account,
-                               @Option("fields") @Default("id name statusCategory.key description") final String fields) throws Exception {
+                               @Option("fields") @Default("id name statusCategory.key description") final String fields,
+                               @Option("sort") @Default("name") final String sort) throws Exception {
         final Client client = account.getClient();
         final MetadataRestClient metadataClient = client.getMetadataClient();
-        return Formatting.asTable(metadataClient.getStatuses().get(), fields);
+        return Formatting.asTable(metadataClient.getStatuses().get(), fields, sort);
     }
 
     @Command("priorities")
     public String[][] priorities(@Option("account") @Default("default") final Account account,
-                                 @Option("fields") @Default("id name description") final String fields) throws Exception {
+                                 @Option("fields") @Default("id name description") final String fields,
+                                 @Option("sort") @Default("name") final String sort) throws Exception {
         final Client client = account.getClient();
         final MetadataRestClient metadataClient = client.getMetadataClient();
-        return Formatting.asTable(metadataClient.getPriorities().get(), fields);
+        return Formatting.asTable(metadataClient.getPriorities().get(), fields, sort);
     }
 
     @Command("resolutions")
     public String[][] resolutions(@Option("account") @Default("default") final Account account,
-                                  @Option("fields") @Default("id name description") final String fields) throws Exception {
+                                  @Option("fields") @Default("id name description") final String fields,
+                                  @Option("sort") @Default("name") final String sort) throws Exception {
         final Client client = account.getClient();
         final MetadataRestClient metadataClient = client.getMetadataClient();
-        return Formatting.asTable(metadataClient.getResolutions().get(), fields);
+        return Formatting.asTable(metadataClient.getResolutions().get(), fields, sort);
     }
 
     @Command("fields")
     public String[][] fields(@Option("account") @Default("default") final Account account,
-                             @Option("fields") @Default("fieldType id name") final String fields) throws Exception {
+                             @Option("fields") @Default("fieldType id name") final String fields,
+                             @Option("sort") @Default("name") final String sort) throws Exception {
         final Client client = account.getClient();
         final MetadataRestClient metadataClient = client.getMetadataClient();
-        return Formatting.asTable(metadataClient.getFields().get(), fields);
+        return Formatting.asTable(metadataClient.getFields().get(), fields, sort);
     }
 
     //    @Command("subtasks")
