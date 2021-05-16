@@ -33,6 +33,13 @@ import org.tomitribe.jamira.core.ProjectKey;
 @Command("list")
 public class ListCommand {
 
+    /**
+     * List the subtasks for the specified parent task
+     * @param parent The issue key of the parent issue
+     * @param account The shortname of the jira install configured via the `setup` command
+     * @param fields Select the fields desired in the final output.  Use `--fields=all` to see all possible fields.
+     * @param sort Sort the results by the specified field or fields.
+     */
     @Command("subtasks")
     public String[][] subtasks(final IssueKey parent,
                                @Option("account") @Default("default") final Account account,
@@ -44,6 +51,12 @@ public class ListCommand {
         return Formatting.asTable(issue.getSubtasks(), fields, sort);
     }
 
+    /**
+     * List the projects available in the JIRA instance
+     * @param account The shortname of the jira install configured via the `setup` command
+     * @param fields Select the fields desired in the final output.  Use `--fields=all` to see all possible fields.
+     * @param sort Sort the results by the specified field or fields.
+     */
     @Command("projects")
     public String[][] projects(
             @Option("account") @Default("default") final Account account,
@@ -53,6 +66,12 @@ public class ListCommand {
         return Formatting.asTable(client.getProjectClient().getAllProjects().get(), fields, sort);
     }
 
+    /**
+     * List the versions for the specified project
+     * @param account The shortname of the jira install configured via the `setup` command
+     * @param fields Select the fields desired in the final output.  Use `--fields=all` to see all possible fields.
+     * @param sort Sort the results by the specified field or fields.
+     */
     @Command("versions")
     public String[][] versions(final ProjectKey projectKey,
                                @Option("account") @Default("default") final Account account,
@@ -63,6 +82,12 @@ public class ListCommand {
         return Formatting.asTable(project.getVersions(), fields, sort);
     }
 
+    /**
+     * List the components for the specified project
+     * @param account The shortname of the jira install configured via the `setup` command
+     * @param fields Select the fields desired in the final output.  Use `--fields=all` to see all possible fields.
+     * @param sort Sort the results by the specified field or fields.
+     */
     @Command("components")
     public String[][] components(final ProjectKey projectKey,
                                  @Option("account") @Default("default") final Account account,
@@ -133,6 +158,12 @@ public class ListCommand {
         return Formatting.asTable(groupClient.findGroups(query, exclude, maxResults, userName).get());
     }
 
+    /**
+     * List the project roles for the specified project
+     * @param account The shortname of the jira install configured via the `setup` command
+     * @param fields Select the fields desired in the final output.  Use `--fields=all` to see all possible fields.
+     * @param sort Sort the results by the specified field or fields.
+     */
     @Command("project-roles")
     public String[][] projectRoles(final ProjectKey projectKey,
                                    @Option("account") @Default("default") final Account account,
@@ -143,6 +174,12 @@ public class ListCommand {
         return Formatting.asTable(project.getProjectRoles(), fields, sort);
     }
 
+    /**
+     * List the favorite filters for the current account
+     * @param account The shortname of the jira install configured via the `setup` command
+     * @param fields Select the fields desired in the final output.  Use `--fields=all` to see all possible fields.
+     * @param sort Sort the results by the specified field or fields.
+     */
     @Command("favourite-filters")
     public String[][] favouriteFilters(@Option("account") @Default("default") final Account account,
                                        @Option("fields") @Default("id name jql") final String fields,
@@ -152,6 +189,12 @@ public class ListCommand {
         return Formatting.asTable(searchClient.getFavouriteFilters().get(), fields, sort);
     }
 
+    /**
+     * List the issue types for the JIRA instance
+     * @param account The shortname of the jira install configured via the `setup` command
+     * @param fields Select the fields desired in the final output.  Use `--fields=all` to see all possible fields.
+     * @param sort Sort the results by the specified field or fields.
+     */
     @Command("issue-types")
     public String[][] issueTypes(@Option("account") @Default("default") final Account account,
                                  @Option("fields") @Default("id name description") final String fields,
@@ -161,6 +204,12 @@ public class ListCommand {
         return Formatting.asTable(metadataClient.getIssueTypes().get(), fields, sort);
     }
 
+    /**
+     * List the issue types for the specified project
+     * @param account The shortname of the jira install configured via the `setup` command
+     * @param fields Select the fields desired in the final output.  Use `--fields=all` to see all possible fields.
+     * @param sort Sort the results by the specified field or fields.
+     */
     @Command("issue-types")
     public String[][] issueTypes(final ProjectKey projectKey,
                                  @Option("account") @Default("default") final Account account,
@@ -171,6 +220,12 @@ public class ListCommand {
         return Formatting.asTable(project.getIssueTypes(), fields, sort);
     }
 
+    /**
+     * List the issue link types for the JIRA instance
+     * @param account The shortname of the jira install configured via the `setup` command
+     * @param fields Select the fields desired in the final output.  Use `--fields=all` to see all possible fields.
+     * @param sort Sort the results by the specified field or fields.
+     */
     @Command("issue-link-types")
     public String[][] issueLinkTypes(@Option("account") @Default("default") final Account account,
                                      @Option("fields") @Default("id name inward outward") final String fields,
@@ -180,6 +235,12 @@ public class ListCommand {
         return Formatting.asTable(metadataClient.getIssueLinkTypes().get(), fields, sort);
     }
 
+    /**
+     * List the statuses configured in the JIRA instance
+     * @param account The shortname of the jira install configured via the `setup` command
+     * @param fields Select the fields desired in the final output.  Use `--fields=all` to see all possible fields.
+     * @param sort Sort the results by the specified field or fields.
+     */
     @Command("statuses")
     public String[][] statuses(@Option("account") @Default("default") final Account account,
                                @Option("fields") @Default("id name statusCategory.key description") final String fields,
@@ -189,6 +250,12 @@ public class ListCommand {
         return Formatting.asTable(metadataClient.getStatuses().get(), fields, sort);
     }
 
+    /**
+     * List the priorities configured in the JIRA instance
+     * @param account The shortname of the jira install configured via the `setup` command
+     * @param fields Select the fields desired in the final output.  Use `--fields=all` to see all possible fields.
+     * @param sort Sort the results by the specified field or fields.
+     */
     @Command("priorities")
     public String[][] priorities(@Option("account") @Default("default") final Account account,
                                  @Option("fields") @Default("id name description") final String fields,
@@ -198,6 +265,12 @@ public class ListCommand {
         return Formatting.asTable(metadataClient.getPriorities().get(), fields, sort);
     }
 
+    /**
+     * List the resolutions configured in the JIRA instance
+     * @param account The shortname of the jira install configured via the `setup` command
+     * @param fields Select the fields desired in the final output.  Use `--fields=all` to see all possible fields.
+     * @param sort Sort the results by the specified field or fields.
+     */
     @Command("resolutions")
     public String[][] resolutions(@Option("account") @Default("default") final Account account,
                                   @Option("fields") @Default("id name description") final String fields,
@@ -207,6 +280,12 @@ public class ListCommand {
         return Formatting.asTable(metadataClient.getResolutions().get(), fields, sort);
     }
 
+    /**
+     * List the custom fields configured in the JIRA instance
+     * @param account The shortname of the jira install configured via the `setup` command
+     * @param fields Select the fields desired in the final output.  Use `--fields=all` to see all possible fields.
+     * @param sort Sort the results by the specified field or fields.
+     */
     @Command("fields")
     public String[][] fields(@Option("account") @Default("default") final Account account,
                              @Option("fields") @Default("fieldType id name") final String fields,
